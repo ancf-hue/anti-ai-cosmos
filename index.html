@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <title>Анти ИИ Космос</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #f1f5f9;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            top: 0; left: 0;
+        }
+        .app {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .loading-screen {
+            position: absolute; inset: 0; background: #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; transition: opacity 0.5s;
+        }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loading-video { width: 100%; height: 100%; object-fit: cover; }
+        .sound-toggle {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%; width: 56px; height: 56px;
+            font-size: 28px; cursor: pointer; z-index: 1001;
+            display: flex; align-items: center; justify-content: center; color: white;
+        }
+        .menu-screen {
+            display: flex; flex-direction: column; height: 100%;
+            padding: 20px 16px; overflow-y: auto;
+        }
+        .menu-screen.hidden { display: none; }
+        .app-header { text-align: center; padding: 10px 0 20px; }
+        .app-header h1 {
+            font-size: 24px; font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #34d399);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .app-header img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
+        .app-header p { color: #94a3b8; font-size: 12px; margin-top: 8px; }
+        .menu-grid { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+        .menu-btn {
+            background: linear-gradient(145deg, rgba(30,41,59,0.95), rgba(15,23,42,0.9));
+            backdrop-filter: blur(10px); border: 2px solid rgba(96,165,250,0.3);
+            border-radius: 24px; padding: 18px 20px;
+            display: flex; align-items: center; gap: 16px; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+        }
+        .menu-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+        .menu-btn .icon {
+            font-size: 36px; width: 56px; height: 56px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 20px; background: rgba(96,165,250,0.2);
+        }
+        .menu-btn .label { font-weight: 700; font-size: 18px; color: white; }
+        .menu-btn .desc { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        .menu-btn.emergency {
+            background: linear-gradient(145deg, rgba(96,165,250,0.4), rgba(59,130,246,0.3));
+            border-color: rgba(96,165,250,0.5);
+        }
+        .section-screen { display: none; flex-direction: column; height: 100%; }
+        .section-screen.active { display: flex; }
+        .screen-header {
+            padding: 16px; display: flex; align-items: center; gap: 12px;
+            background: rgba(15,23,42,0.95); border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .screen-header img { width: 36px; height: 36px; border-radius: 10px; }
+        .screen-back {
+            width: 40px; height: 40px; background: rgba(30,41,59,0.85);
+            border: none; border-radius: 12px; color: white; font-size: 20px; cursor: pointer;
+        }
+        .screen-title { font-size: 18px; font-weight: 700; flex: 1; }
+        .screen-content { flex: 1; padding: 16px; overflow-y: auto; }
+        .city-panel {
+            background: rgba(30,41,59,0.85);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            border: 1px solid #3b82f6;
+        }
+        .city-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #60a5fa;
+            margin-bottom: 8px;
+        }
+        .city-coords {
+            font-size: 13px;
+            color: #94a3b8;
+            font-family: monospace;
+            margin-bottom: 16px;
+        }
+        .city-constellation {
+            font-size: 18px;
+            color: #34d399;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+        }
+        .city-time {
+            font-size: 28px;
+            font-weight: 700;
+            color: #f1f5f9;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+        .city-date {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+        .city-list-container {
+            max-height: 350px;
+            overflow-y: auto;
+            background: rgba(15,23,42,0.95);
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .city-select-item {
+            padding: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .city-select-item:active { background: #3b82f6; }
+        .city-select-name { font-size: 16px; font-weight: 600; }
+        .city-select-region { font-size: 11px; color: #94a3b8; }
+        .back-btn {
+            margin-top: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #3b82f6;
+            width: 100%;
+            padding: 14px;
+            border-radius: 24px;
+            color: white;
+            cursor: pointer;
+        }
+        .sky-screen { position: relative; flex: 1; background: #000; }
+        #video { width: 100%; height: 100%; object-fit: cover; display: none; }
+        #star-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .crosshair {
+            position: absolute; top: 50%; left: 50%;
+            width: 28px; height: 28px; border: 2px solid #60a5fa;
+            border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .sky-controls {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 12px; background: linear-gradient(to top, rgba(15,23,42,0.95), transparent);
+            display: flex; flex-direction: column; gap: 10px; z-index: 10;
+        }
+        .time-season-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+        .mini-btn {
+            padding: 8px 12px; border: none; border-radius: 16px;
+            background: rgba(30,41,59,0.9); color: #e2e8f0;
+            font-size: 11px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; min-width: 50px;
+        }
+        .mini-btn:active { transform: scale(0.95); }
+        .mini-btn.active { background: #3b82f6; color: white; }
+        .sky-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 24px;
+            background: #3b82f6; color: white; font-size: 15px; font-weight: 600; cursor: pointer;
+        }
+        .sky-btn.secondary { background: rgba(255,255,255,0.1); }
+        .status {
+            background: rgba(30,41,59,0.9); border-radius: 12px;
+            padding: 8px 12px; font-size: 11px; display: flex; justify-content: space-between;
+        }
+        .instruction-card, .support-card {
+            background: rgba(30,41,59,0.85); border-radius: 24px;
+            padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .instruction-card h3 { color: #60a5fa; font-size: 15px; margin-bottom: 10px; }
+        .instruction-card p { color: #94a3b8; font-size: 13px; line-height: 1.5; }
+        .support-phone {
+            font-size: 22px; font-weight: 800; color: #34d399; text-align: center; margin: 12px 0;
+        }
+        .copy-btn {
+            background: #34d399; border: none; border-radius: 60px;
+            padding: 12px; width: 100%; font-weight: 700; cursor: pointer;
+        }
+        .projects-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+        .project-item {
+            background: rgba(255,255,255,0.08); border-radius: 18px; padding: 14px;
+            display: flex; align-items: center; gap: 14px; text-decoration: none;
+            color: inherit; transition: all 0.1s; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .project-item:active { background: rgba(96,165,250,0.2); transform: scale(0.98); }
+        .project-icon { font-size: 36px; min-width: 55px; text-align: center; }
+        .project-info { flex: 1; }
+        .project-title { font-weight: 700; font-size: 14px; color: #a5d6ff; margin-bottom: 4px; }
+        .project-desc { font-size: 11px; color: #8ba3c7; }
+        .project-arrow { font-size: 20px; color: #4a9eff; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            display: none; align-items: flex-end; justify-content: center; z-index: 2000;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-bottom {
+            background: #1e293b; width: 100%; max-width: 450px; max-height: 70vh;
+            border-radius: 28px 28px 0 0; overflow: hidden; display: flex; flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-header {
+            padding: 20px; text-align: center; font-size: 18px; font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .modal-list { flex: 1; overflow-y: auto; padding: 0 16px; }
+        .modal-lang-item {
+            padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer; font-size: 15px; display: flex; justify-content: space-between;
+        }
+        .modal-lang-item.selected { color: #3b82f6; font-weight: 700; }
+        .modal-lang-item:active { background: rgba(255,255,255,0.05); }
+        .modal-close {
+            padding: 16px; text-align: center; background: rgba(0,0,0,0.3);
+            cursor: pointer; color: #94a3b8; font-weight: 600;
+        }
+        .modal-close:active { background: rgba(0,0,0,0.5); }
+        .hidden { display: none; }
+        
+        /* === АНИМАЦИЯ СОЗВЕЗДИЙ === */
+        #animation-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+        }
+        #animation-overlay.active { display: flex; }
+        #animation-canvas {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+        }
+        .animation-header {
+            padding: 15px;
+            text-align: center;
+            background: rgba(15,23,42,0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .animation-title { font-size: 18px; font-weight: 700; color: #00ff99; }
+        .animation-subtitle { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        .animation-controls {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            background: rgba(15,23,42,0.95);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .anim-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .anim-btn.primary { background: #00ff99; color: #000; }
+        .anim-btn.secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+        .anim-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- ЗАГРУЗКА -->
+    <div class="loading-screen" id="loadingScreen">
+        <button class="sound-toggle" id="soundBtn">🔇</button>
+        <video src="cube.mp4" muted playsinline preload="auto" class="loading-video" id="loadingVideo"></video>
+    </div>
+
+    <div id="appContent" style="display: none; height: 100%; display: flex; flex-direction: column;">
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div class="menu-screen" id="menuScreen">
+            <div class="app-header">
+                <h1>
+                    <img src="logo.jpeg" alt="Logo" onerror="this.style.display='none'">
+                    <span id="t-title">Анти ИИ Космос</span>
+                </h1>
+                <p id="t-subtitle">Определение созвездий с учётом времени и сезона</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-btn emergency" onclick="showSky('photo')">
+                    <div class="icon">📷</div>
+                    <div>
+                        <div class="label" data-t="photo">Сделать фото</div>
+                        <div class="desc" data-t="photoDesc">Сохранить небо</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="showSky('video')">
+                    <div class="icon">🎥</div>
+                    <div>
+                        <div class="label" data-t="video">Видео</div>
+                        <div class="desc" data-t="videoDesc">Запись неба</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="showCityScreen()">
+                    <div class="icon">🏙️</div>
+                    <div>
+                        <div class="label" data-t="myCity">Мой город</div>
+                        <div class="desc" id="currentCityDesc">Выберите город</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="openLangModal()">
+                    <div class="icon">🗣️</div>
+                    <div>
+                        <div class="label" data-t="language">Язык</div>
+                        <div class="desc" id="currentLang">Русский</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="showScreen('instruction')">
+                    <div class="icon">📖</div>
+                    <div>
+                        <div class="label" data-t="howto">Как пользоваться</div>
+                        <div class="desc" data-t="howtoDesc">Инструкция</div>
+                    </div>
+                </div>
+                <div class="menu-btn" onclick="showScreen('support')">
+                    <div class="icon">💝</div>
+                    <div>
+                        <div class="label" data-t="support">Поддержать проект</div>
+                        <div class="desc" data-t="supportDesc">Помочь развитию</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН МОЙ ГОРОД -->
+        <div class="section-screen" id="cityScreen">
+            <div class="screen-header">
+                <button class="screen-back" onclick="backToMenu()">←</button>
+                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
+                <div class="screen-title" data-t="myCity">🏙️ Мой город</div>
+            </div>
+            <div class="screen-content">
+                <div class="city-list-container" id="citiesContainer">
+                    <div id="citiesList"></div>
+                </div>
+                <div id="cityInfo" class="city-panel hidden">
+                    <div class="city-name" id="selectedCityName">—</div>
+                    <div class="city-coords" id="selectedCityCoords">—</div>
+                    <div class="city-constellation" id="selectedCityConstellation">🌌 Определение...</div>
+                    <div class="city-time" id="selectedCityTime">--:--:--</div>
+                    <div class="city-date" id="selectedCityDate">—</div>
+                    <!-- КНОПКА АНИМАЦИИ -->
+                    <button class="sky-btn" onclick="startConstellationAnimation()" style="margin-top:15px;background:linear-gradient(45deg,#00ff99,#00ccff);color:#000;font-weight:700;">
+                        🎬 Показать анимацию созвездия
+                    </button>
+                </div>
+                <button class="back-btn" onclick="backToMenuFromCity()">← <span data-t="back">Назад</span></button>
+            </div>
+        </div>
+
+        <!-- ЭКРАН НЕБА -->
+        <div class="section-screen" id="skyScreen">
+            <div class="screen-header">
+                <button class="screen-back" onclick="backToMenu()">←</button>
+                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
+                <div class="screen-title" id="skyTitle">📷 Фото неба</div>
+            </div>
+            <div class="sky-screen">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="star-canvas"></canvas>
+                <div class="crosshair"></div>
+                <div class="sky-controls">
+                    <div class="time-season-row">
+                        <button class="mini-btn" onclick="setTimeMode('real')" id="btn-real" data-t="now">Сейчас</button>
+                        <button class="mini-btn" onclick="setTimeMode('eve')" id="btn-eve">🌙 <span data-t="eve">Вечер</span></button>
+                        <button class="mini-btn" onclick="setTimeMode('night')" id="btn-night">🌑 <span data-t="night">Ночь</span></button>
+                        <button class="mini-btn" onclick="setTimeMode('morn')" id="btn-morn">🌅 <span data-t="morn">Утро</span></button>
+                    </div>
+                    <div class="time-season-row">
+                        <button class="mini-btn" onclick="setSeason('spr')" id="btn-spr">🌸 <span data-t="spr">Весна</span></button>
+                        <button class="mini-btn" onclick="setSeason('sum')" id="btn-sum">☀️ <span data-t="sum">Лето</span></button>
+                        <button class="mini-btn" onclick="setSeason('aut')" id="btn-aut">🍂 <span data-t="aut">Осень</span></button>
+                        <button class="mini-btn" onclick="setSeason('win')" id="btn-win">❄️ <span data-t="win">Зима</span></button>
+                    </div>
+                    <button class="sky-btn" onclick="takePhoto()" id="skyActionBtn" data-t="photo">📷 Сделать фото</button>
+                    <button class="sky-btn secondary" onclick="backToMenu()">↩ <span data-t="back">Назад</span></button>
+                    <div class="status">
+                        <span><span data-t="mode">Режим</span>: <span id="statusModeText">Сейчас • Лето</span></span>
+                        <span id="statusTime">--:--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ИНСТРУКЦИЯ -->
+        <div class="section-screen" id="instructionScreen">
+            <div class="screen-header">
+                <button class="screen-back" onclick="showScreen('main')">←</button>
+                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
+                <div class="screen-title" data-t="howto">Как пользоваться</div>
+            </div>
+            <div class="screen-content">
+                <div class="instruction-card">
+                    <h3>🏙️ 1. Выберите город</h3>
+                    <p>Нажмите «Мой город» → найдите свой город в списке (300+ городов России) → приложение покажет координаты и время.</p>
+                </div>
+                <div class="instruction-card">
+                    <h3>✨ 2. Узнайте созвездие</h3>
+                    <p>Приложение автоматически определит, какое созвездие сейчас в зените над вашим городом (учитывая время и сезон).</p>
+                </div>
+                <div class="instruction-card">
+                    <h3>🎬 3. Смотрите анимацию</h3>
+                    <p>Нажмите «🎬 Показать анимацию созвездия»:<br>• Загораются белые звёзды<br>• Рисуются неоновые линии (каждое созвездие — свой цвет)<br>• Появляются названия звёзд: Дубхе, Мерак, Арктур...<br>• Вспыхивает название созвездия</p>
+                </div>
+                <div class="instruction-card">
+                    <h3>🗣️ 4. Смените язык</h3>
+                    <p>Нажмите «🗣️ Язык» → выберите русский, татарский, чеченский, башкирский или чувашский → весь интерфейс переведётся.</p>
+                </div>
+                <div class="instruction-card">
+                    <h3>📷 5. Сделайте фото</h3>
+                    <p>Нажмите «📷 Сделать фото» → сохраните изображение неба с наложенными созвездиями. Работает полностью офлайн.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПОДДЕРЖКА -->
+        <div class="section-screen" id="supportScreen">
+            <div class="screen-header">
+                <button class="screen-back" onclick="showScreen('main')">←</button>
+                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
+                <div class="screen-title" data-t="support">Поддержать проект</div>
+            </div>
+            <div class="screen-content">
+                <div class="support-card">
+                    <p>🤝 <span data-t="supportFree">Проект бесплатный навсегда</span></p>
+                    <div class="support-phone">8-920-227-56-76</div>
+                    <button class="copy-btn" onclick="copyPhoneNumber()">📋 <span data-t="copy">Скопировать номер</span></button>
+                </div>
+                <div class="instruction-card">
+                    <h3 data-t="ourProjects">🚀 Наши проекты</h3>
+                    <div class="projects-list">
+                        <a href="https://anti-ai-shield.vercel.app/" target="_blank" class="project-item">
+                            <div class="project-icon">🛡️</div>
+                            <div class="project-info">
+                                <div class="project-title">Защита от телефонных мошенников</div>
+                                <div class="project-desc">Автоответчик, SOS-режим, ИИ-анализатор угроз</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                        <a href="https://anti-bullying-app-one.vercel.app/" target="_blank" class="project-item">
+                            <div class="project-icon">🏫</div>
+                            <div class="project-info">
+                                <div class="project-title">Защита от Школьного буллинга</div>
+                                <div class="project-desc">Помощь детям и подросткам противостоять травле</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                        <a href="https://anti-ai-animals.vercel.app/" target="_blank" class="project-item">
+                            <div class="project-icon">🐾</div>
+                            <div class="project-info">
+                                <div class="project-title">Анти ИИ: Животные поют</div>
+                                <div class="project-desc">ИИ-музыка с животными</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                        <a href="https://anti-ai-stress.vercel.app/" target="_blank" class="project-item">
+                            <div class="project-icon">🧘</div>
+                            <div class="project-info">
+                                <div class="project-title">Анти-ИИ Стресс</div>
+                                <div class="project-desc">Управление гневом и эмоциями</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                        <a href="https://anti-ai-barcode.vercel.app/" target="_blank" class="project-item">
+                            <div class="project-icon">📱</div>
+                            <div class="project-info">
+                                <div class="project-title">Анти ИИ Штрих-код</div>
+                                <div class="project-desc">Защита данных через QR и штрих-коды</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                        <a href="https://rutube.ru/channel/24404224/" target="_blank" class="project-item">
+                            <div class="project-icon">✨</div>
+                            <div class="project-info">
+                                <div class="project-title">ВолшебствО</div>
+                                <div class="project-desc">Магический канал с удивительным контентом</div>
+                            </div>
+                            <div class="project-arrow">→</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОВЕРЛЕЙ АНИМАЦИИ СОЗВЕЗДИЙ -->
+    <div id="animation-overlay">
+        <div class="animation-header">
+            <div class="animation-title" id="anim-constellation-name">БОЛЬШАЯ МЕДВЕДИЦА</div>
+            <div class="animation-subtitle" id="anim-city-name">Воронеж • 51.66° • 39.20°</div>
+        </div>
+        <canvas id="animation-canvas"></canvas>
+        <div class="animation-controls">
+            <button class="anim-btn secondary" onclick="stopAnimation()">✕ Закрыть</button>
+            <button class="anim-btn primary" onclick="restartAnimation()">🔄 Повторить</button>
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ЯЗЫКОВ -->
+<div class="modal-overlay" id="langModal">
+    <div class="modal-bottom">
+        <div class="modal-header" data-t="selectLang">🗣️ Выберите язык</div>
+        <div class="modal-list" id="langList"></div>
+        <div class="modal-close" onclick="closeLangModal()">✕ <span data-t="close">Закрыть</span></div>
+    </div>
+</div>
+
+<script>
+// === ЯЗЫКИ РОССИИ ===
+const LANGUAGES = {
+    'ru': { name: '🇷🇺 Русский', native: 'Русский' },
+    'tt': { name: '🇹🇹 Татарский', native: 'Татарча' },
+    'ce': { name: '🇨🇪 Чеченский', native: 'Нохчийн' },
+    'ba': { name: '🇧🇦 Башкирский', native: 'Башҡорт' },
+    'cv': { name: '🇨🇻 Чувашский', native: 'Чӑваш' }
+};
+
+// === ПЕРЕВОДЫ ГОРОДОВ ===
+const CITY_NAMES = {
+    'Москва': { tt: 'Мәскәү', ce: 'Москва', ba: 'Мәскәү', cv: 'Мускав' },
+    'Санкт-Петербург': { tt: 'Санкт-Петербург', ce: 'Санкт-Петербург', ba: 'Санкт-Петербург', cv: 'Санкт-Петербург' },
+    'Казань': { tt: 'Казан', ce: 'Казань', ba: 'Ҡазан', cv: 'Хусан' },
+    'Уфа': { tt: 'Уфа', ce: 'Уфа', ba: 'Өфө', cv: 'Ӗпхӳ' },
+    'Грозный': { tt: 'Грозный', ce: 'Соьлжа-ГӀала', ba: 'Грозный', cv: 'Грозный' },
+    'Махачкала': { tt: 'Махачкала', ce: 'Махачкала', ba: 'Махачкала', cv: 'Махачкала' },
+    'Чебоксары': { tt: 'Чабаксар', ce: 'Чебоксары', ba: 'Чебоксары', cv: 'Шупашкар' },
+    'Йошкар-Ола': { tt: 'Йошкар-Ола', ce: 'Йошкар-Ола', ba: 'Йошкар-Ола', cv: 'Йошкар-Ола' },
+    'Сыктывкар': { tt: 'Сыктывкар', ce: 'Сыктывкар', ba: 'Сыктывкар', cv: 'Сыктывкар' },
+    'Петрозаводск': { tt: 'Петрозаводск', ce: 'Петрозаводск', ba: 'Петрозаводск', cv: 'Петрозаводск' },
+    'Саранск': { tt: 'Саранск', ce: 'Саранск', ba: 'Саранск', cv: 'Саранск' },
+    'Ижевск': { tt: 'Ижау', ce: 'Ижевск', ba: 'Ижевск', cv: 'Ижевск' },
+    'Красноярск': { tt: 'Кызылъяр', ce: 'Красноярск', ba: 'Ҡыҙылъяр', cv: 'Красноярск' },
+    'Новосибирск': { tt: 'Новосибирск', ce: 'Новосибирск', ba: 'Новосибирск', cv: 'Новосибирск' },
+    'Екатеринбург': { tt: 'Екатеринбург', ce: 'Екатеринбург', ba: 'Екатеринбург', cv: 'Екатеринбург' },
+    'Челябинск': { tt: 'Чиләбе', ce: 'Челябинск', ba: 'Силәбе', cv: 'Челябинск' },
+    'Омск': { tt: 'Омск', ce: 'Омск', ba: 'Омск', cv: 'Омск' },
+    'Тюмень': { tt: 'Төмән', ce: 'Тюмень', ba: 'Төмән', cv: 'Тюмень' },
+    'Владивосток': { tt: 'Владивосток', ce: 'Владивосток', ba: 'Владивосток', cv: 'Владивосток' },
+    'Иркутск': { tt: 'Иркутск', ce: 'Иркутск', ba: 'Иркутск', cv: 'Иркутск' },
+    'Хабаровск': { tt: 'Хабаровск', ce: 'Хабаровск', ba: 'Хабаровск', cv: 'Хабаровск' },
+    'Якутск': { tt: 'Якутск', ce: 'Якутск', ba: 'Якутск', cv: 'Якутск' },
+    'Улан-Удэ': { tt: 'Улан-Удэ', ce: 'Улан-Удэ', ba: 'Улан-Удэ', cv: 'Улан-Удэ' },
+    'Чита': { tt: 'Чита', ce: 'Чита', ba: 'Чита', cv: 'Чита' },
+    'Абакан': { tt: 'Абакан', ce: 'Абакан', ba: 'Абакан', cv: 'Абакан' },
+    'Кызыл': { tt: 'Кызыл', ce: 'Кызыл', ba: 'Ҡыҙыл', cv: 'Кызыл' },
+    'Горно-Алтайск': { tt: 'Горно-Алтайск', ce: 'Горно-Алтайск', ba: 'Таулы Алтайск', cv: 'Горно-Алтайск' },
+    'Майкоп': { tt: 'Майкоп', ce: 'Майкоп', ba: 'Майкоп', cv: 'Майкоп' },
+    'Нальчик': { tt: 'Нальчик', ce: 'Нальчик', ba: 'Нальчик', cv: 'Нальчик' },
+    'Черкесск': { tt: 'Черкесск', ce: 'Черкесск', ba: 'Черкесск', cv: 'Черкесск' },
+    'Элиста': { tt: 'Элиста', ce: 'Элиста', ba: 'Элиста', cv: 'Элиста' },
+    'Петропавловск-Камчатский': { tt: 'Петропавловск-Камчатский', ce: 'Петропавловск-Камчатский', ba: 'Петропавловск-Камчатский', cv: 'Петропавловск-Камчатский' },
+    'Южно-Сахалинск': { tt: 'Южно-Сахалинск', ce: 'Южно-Сахалинск', ba: 'Южно-Сахалинск', cv: 'Южно-Сахалинск' },
+    'Благовещенск': { tt: 'Благовещенск', ce: 'Благовещенск', ba: 'Благовещенск', cv: 'Благовещенск' },
+    'Биробиджан': { tt: 'Биробиджан', ce: 'Биробиджан', ba: 'Биробиджан', cv: 'Биробиджан' },
+    'Воронеж': { tt: 'Воронеж', ce: 'Воронеж', ba: 'Воронеж', cv: 'Воронеж' },
+    'Ростов-на-Дону': { tt: 'Дондагы Ростов', ce: 'Ростов-на-Дону', ba: 'Дондағы Ростов', cv: 'Ростов-на-Дону' },
+    'Краснодар': { tt: 'Краснодар', ce: 'Краснодар', ba: 'Краснодар', cv: 'Краснодар' },
+    'Сочи': { tt: 'Сочи', ce: 'Сочи', ba: 'Сочи', cv: 'Сочи' },
+    'Волгоград': { tt: 'Волгоград', ce: 'Волгоград', ba: 'Волгоград', cv: 'Волгоград' },
+    'Нижний Новгород': { tt: 'Түбән Новгород', ce: 'Нижний Новгород', ba: 'Түбәнге Новгород', cv: 'Анатри Новгород' },
+    'Самара': { tt: 'Самара', ce: 'Самара', ba: 'Самара', cv: 'Самара' },
+    'Пермь': { tt: 'Пермь', ce: 'Пермь', ba: 'Пермь', cv: 'Пермь' },
+    'Киров': { tt: 'Киров', ce: 'Киров', ba: 'Киров', cv: 'Киров' },
+    'Курган': { tt: 'Курган', ce: 'Курган', ba: 'Ҡурған', cv: 'Курган' },
+    'Оренбург': { tt: 'Ырынбур', ce: 'Оренбург', ba: 'Ырымбур', cv: 'Оренбург' },
+    'Саратов': { tt: 'Сарытау', ce: 'Саратов', ba: 'Һарытау', cv: 'Саратов' },
+    'Ульяновск': { tt: 'Сембер', ce: 'Ульяновск', ba: 'Сембер', cv: 'Чĕмпĕр' },
+    'Пенза': { tt: 'Пенза', ce: 'Пенза', ba: 'Пенза', cv: 'Пенза' },
+    'Тамбов': { tt: 'Тамбов', ce: 'Тамбов', ba: 'Тамбов', cv: 'Тамбов' },
+    'Липецк': { tt: 'Липецк', ce: 'Липецк', ba: 'Липецк', cv: 'Липецк' },
+    'Курск': { tt: 'Курск', ce: 'Курск', ba: 'Курск', cv: 'Курск' },
+    'Белгород': { tt: 'Белгород', ce: 'Белгород', ba: 'Белгород', cv: 'Белгород' },
+    'Орёл': { tt: 'Орёл', ce: 'Орёл', ba: 'Өрөл', cv: 'Орёл' },
+    'Рязань': { tt: 'Рязань', ce: 'Рязань', ba: 'Рязань', cv: 'Рязань' },
+    'Тула': { tt: 'Тула', ce: 'Тула', ba: 'Тула', cv: 'Тула' },
+    'Калуга': { tt: 'Калуга', ce: 'Калуга', ba: 'Калуга', cv: 'Калуга' },
+    'Владимир': { tt: 'Владимир', ce: 'Владимир', ba: 'Владимир', cv: 'Владимир' },
+    'Ярославль': { tt: 'Ярославль', ce: 'Ярославль', ba: 'Ярославль', cv: 'Ярославль' },
+    'Тверь': { tt: 'Тверь', ce: 'Тверь', ba: 'Тверь', cv: 'Тверь' },
+    'Иваново': { tt: 'Иваново', ce: 'Иваново', ba: 'Иваново', cv: 'Иваново' },
+    'Кострома': { tt: 'Кострома', ce: 'Кострома', ba: 'Кострома', cv: 'Кострома' },
+    'Смоленск': { tt: 'Смоленск', ce: 'Смоленск', ba: 'Смоленск', cv: 'Смоленск' },
+    'Брянск': { tt: 'Брянск', ce: 'Брянск', ba: 'Брянск', cv: 'Брянск' },
+    'Вологда': { tt: 'Вологда', ce: 'Вологда', ba: 'Вологда', cv: 'Вологда' },
+    'Архангельск': { tt: 'Архангельск', ce: 'Архангельск', ba: 'Архангельск', cv: 'Архангельск' },
+    'Мурманск': { tt: 'Мурманск', ce: 'Мурманск', ba: 'Мурманск', cv: 'Мурманск' },
+    'Великий Новгород': { tt: 'Бөек Новгород', ce: 'Великий Новгород', ba: 'Бөйөк Новгород', cv: 'Аслă Новгород' },
+    'Псков': { tt: 'Псков', ce: 'Псков', ba: 'Псков', cv: 'Псков' },
+    'Калининград': { tt: 'Калининград', ce: 'Калининград', ba: 'Калининград', cv: 'Калининград' },
+    'Севастополь': { tt: 'Акъяр', ce: 'Севастополь', ba: 'Севастополь', cv: 'Севастополь' },
+    'Симферополь': { tt: 'Акмесджит', ce: 'Симферополь', ba: 'Симферополь', cv: 'Симферополь' },
+    'Ялта': { tt: 'Ялта', ce: 'Ялта', ba: 'Ялта', cv: 'Ялта' }
+};
+
+function getCityName(city) {
+    if (!city || !city.name) return '';
+    const translations = CITY_NAMES[city.name];
+    if (translations && translations[state.lang]) return translations[state.lang];
+    return city.name;
+}
+
+// === 300+ ГОРОДОВ РОССИИ ===
+const RUSSIA_CITIES = [
+    { name: "Москва", region: "Московская обл.", lat: 55.7558, lon: 37.6173 },
+    { name: "Санкт-Петербург", region: "Ленинградская обл.", lat: 59.9343, lon: 30.3351 },
+    { name: "Воронеж", region: "Воронежская обл.", lat: 51.6605, lon: 39.2003 },
+    { name: "Краснодар", region: "Краснодарский край", lat: 45.0355, lon: 38.9753 },
+    { name: "Сочи", region: "Краснодарский край", lat: 43.5855, lon: 39.7231 },
+    { name: "Ростов-на-Дону", region: "Ростовская обл.", lat: 47.2221, lon: 39.7203 },
+    { name: "Волгоград", region: "Волгоградская обл.", lat: 48.7080, lon: 44.5133 },
+    { name: "Нижний Новгород", region: "Нижегородская обл.", lat: 56.2965, lon: 43.9361 },
+    { name: "Казань", region: "Татарстан", lat: 55.7887, lon: 49.1221 },
+    { name: "Самара", region: "Самарская обл.", lat: 53.1959, lon: 50.1002 },
+    { name: "Уфа", region: "Башкортостан", lat: 54.7349, lon: 55.9579 },
+    { name: "Екатеринбург", region: "Свердловская обл.", lat: 56.8389, lon: 60.6057 },
+    { name: "Челябинск", region: "Челябинская обл.", lat: 55.1644, lon: 61.4368 },
+    { name: "Новосибирск", region: "Новосибирская обл.", lat: 55.0084, lon: 82.9357 },
+    { name: "Омск", region: "Омская обл.", lat: 54.9885, lon: 73.3242 },
+    { name: "Красноярск", region: "Красноярский край", lat: 56.0097, lon: 92.8525 },
+    { name: "Иркутск", region: "Иркутская обл.", lat: 52.2864, lon: 104.2807 },
+    { name: "Владивосток", region: "Приморский край", lat: 43.1151, lon: 131.8856 },
+    { name: "Хабаровск", region: "Хабаровский край", lat: 48.4800, lon: 135.0800 },
+    { name: "Тюмень", region: "Тюменская обл.", lat: 57.1522, lon: 65.5272 },
+    { name: "Кемерово", region: "Кемеровская обл.", lat: 55.3549, lon: 86.0898 },
+    { name: "Томск", region: "Томская обл.", lat: 56.4951, lon: 84.9726 },
+    { name: "Барнаул", region: "Алтайский край", lat: 53.3561, lon: 83.7900 },
+    { name: "Калининград", region: "Калининградская обл.", lat: 54.7167, lon: 20.5000 },
+    { name: "Мурманск", region: "Мурманская обл.", lat: 68.9667, lon: 33.0833 },
+    { name: "Архангельск", region: "Архангельская обл.", lat: 64.5333, lon: 40.5333 },
+    { name: "Смоленск", region: "Смоленская обл.", lat: 54.7833, lon: 32.0500 },
+    { name: "Тверь", region: "Тверская обл.", lat: 56.8584, lon: 35.9006 },
+    { name: "Тула", region: "Тульская обл.", lat: 54.2000, lon: 37.6167 },
+    { name: "Рязань", region: "Рязанская обл.", lat: 54.6167, lon: 39.7167 },
+    { name: "Ярославль", region: "Ярославская обл.", lat: 57.6261, lon: 39.8845 },
+    { name: "Владимир", region: "Владимирская обл.", lat: 56.1284, lon: 40.4081 },
+    { name: "Калуга", region: "Калужская обл.", lat: 54.5333, lon: 36.2667 },
+    { name: "Орёл", region: "Орловская обл.", lat: 52.9667, lon: 36.0833 },
+    { name: "Курск", region: "Курская обл.", lat: 51.7167, lon: 36.1833 },
+    { name: "Белгород", region: "Белгородская обл.", lat: 50.6000, lon: 36.6000 },
+    { name: "Липецк", region: "Липецкая обл.", lat: 52.6167, lon: 39.6000 },
+    { name: "Тамбов", region: "Тамбовская обл.", lat: 52.7167, lon: 41.4333 },
+    { name: "Пенза", region: "Пензенская обл.", lat: 53.2000, lon: 45.0000 },
+    { name: "Саратов", region: "Саратовская обл.", lat: 51.5333, lon: 46.0333 },
+    { name: "Ульяновск", region: "Ульяновская обл.", lat: 54.3167, lon: 48.3667 },
+    { name: "Ижевск", region: "Удмуртия", lat: 56.8500, lon: 53.2167 },
+    { name: "Пермь", region: "Пермский край", lat: 58.0104, lon: 56.2294 },
+    { name: "Киров", region: "Кировская обл.", lat: 58.6000, lon: 49.6500 },
+    { name: "Курган", region: "Курганская обл.", lat: 55.4400, lon: 65.3300 },
+    { name: "Оренбург", region: "Оренбургская обл.", lat: 51.7682, lon: 55.0968 },
+    { name: "Ставрополь", region: "Ставропольский край", lat: 45.0500, lon: 41.9833 },
+    { name: "Пятигорск", region: "Ставропольский край", lat: 44.0333, lon: 43.0500 },
+    { name: "Вологда", region: "Вологодская обл.", lat: 59.2167, lon: 39.9000 },
+    { name: "Череповец", region: "Вологодская обл.", lat: 59.1333, lon: 37.9000 },
+    { name: "Иваново", region: "Ивановская обл.", lat: 57.0000, lon: 40.9833 },
+    { name: "Кострома", region: "Костромская обл.", lat: 57.7667, lon: 40.9333 },
+    { name: "Великий Новгород", region: "Новгородская обл.", lat: 58.5167, lon: 31.2833 },
+    { name: "Псков", region: "Псковская обл.", lat: 57.8167, lon: 28.3333 },
+    { name: "Астрахань", region: "Астраханская обл.", lat: 46.3500, lon: 48.0333 },
+    { name: "Элиста", region: "Калмыкия", lat: 46.3167, lon: 44.2667 },
+    { name: "Майкоп", region: "Адыгея", lat: 44.6000, lon: 40.1000 },
+    { name: "Черкесск", region: "Карачаево-Черкесия", lat: 44.2167, lon: 42.0500 },
+    { name: "Нальчик", region: "Кабардино-Балкария", lat: 43.4833, lon: 43.6167 },
+    { name: "Владикавказ", region: "Северная Осетия", lat: 43.0333, lon: 44.6833 },
+    { name: "Грозный", region: "Чечня", lat: 43.3167, lon: 45.6833 },
+    { name: "Махачкала", region: "Дагестан", lat: 42.9833, lon: 47.4833 },
+    { name: "Йошкар-Ола", region: "Марий Эл", lat: 56.6333, lon: 47.8833 },
+    { name: "Чебоксары", region: "Чувашия", lat: 56.1167, lon: 47.2500 },
+    { name: "Саранск", region: "Мордовия", lat: 54.1833, lon: 45.1833 },
+    { name: "Сыктывкар", region: "Коми", lat: 61.6667, lon: 50.8167 },
+    { name: "Петрозаводск", region: "Карелия", lat: 61.7833, lon: 34.3500 },
+    { name: "Севастополь", region: "Севастополь", lat: 44.6167, lon: 33.5257 },
+    { name: "Симферополь", region: "Крым", lat: 44.9522, lon: 34.1025 },
+    { name: "Ялта", region: "Крым", lat: 44.4957, lon: 34.1664 },
+    { name: "Евпатория", region: "Крым", lat: 45.1933, lon: 33.3667 },
+    { name: "Феодосия", region: "Крым", lat: 45.0468, lon: 35.3785 },
+    { name: "Абакан", region: "Хакасия", lat: 53.7167, lon: 91.4167 },
+    { name: "Бийск", region: "Алтайский край", lat: 52.5333, lon: 85.2167 },
+    { name: "Рубцовск", region: "Алтайский край", lat: 51.5000, lon: 81.2000 },
+    { name: "Новокузнецк", region: "Кемеровская обл.", lat: 53.7500, lon: 87.1167 },
+    { name: "Прокопьевск", region: "Кемеровская обл.", lat: 53.8833, lon: 86.7167 },
+    { name: "Ленинск-Кузнецкий", region: "Кемеровская обл.", lat: 54.6500, lon: 86.1667 },
+    { name: "Юрга", region: "Кемеровская обл.", lat: 55.7167, lon: 84.8833 },
+    { name: "Северск", region: "Томская обл.", lat: 56.6000, lon: 84.8667 },
+    { name: "Сургут", region: "ХМАО", lat: 61.2500, lon: 73.4167 },
+    { name: "Нижневартовск", region: "ХМАО", lat: 60.9333, lon: 76.5667 },
+    { name: "Нефтеюганск", region: "ХМАО", lat: 61.1000, lon: 72.6000 },
+    { name: "Новый Уренгой", region: "ЯНАО", lat: 66.0833, lon: 76.6333 },
+    { name: "Ноябрьск", region: "ЯНАО", lat: 63.2000, lon: 75.4500 },
+    { name: "Ханты-Мансийск", region: "ХМАО", lat: 61.0000, lon: 69.0000 },
+    { name: "Салехард", region: "ЯНАО", lat: 66.5333, lon: 66.6000 },
+    { name: "Братск", region: "Иркутская обл.", lat: 56.1333, lon: 101.6167 },
+    { name: "Ангарск", region: "Иркутская обл.", lat: 52.5333, lon: 103.8833 },
+    { name: "Улан-Удэ", region: "Бурятия", lat: 51.8333, lon: 107.6167 },
+    { name: "Чита", region: "Забайкальский край", lat: 52.0333, lon: 113.5000 },
+    { name: "Норильск", region: "Красноярский край", lat: 69.3333, lon: 88.2167 },
+    { name: "Кызыл", region: "Тыва", lat: 51.7167, lon: 94.4500 },
+    { name: "Горно-Алтайск", region: "Алтай", lat: 51.9667, lon: 85.9667 },
+    { name: "Биробиджан", region: "Еврейская АО", lat: 48.7833, lon: 132.9333 },
+    { name: "Комсомольск-на-Амуре", region: "Хабаровский край", lat: 50.5500, lon: 137.0000 },
+    { name: "Благовещенск", region: "Амурская обл.", lat: 50.2667, lon: 127.5333 },
+    { name: "Якутск", region: "Якутия", lat: 62.0333, lon: 129.7333 },
+    { name: "Магадан", region: "Магаданская обл.", lat: 59.5667, lon: 150.8000 },
+    { name: "Петропавловск-Камчатский", region: "Камчатский край", lat: 53.0167, lon: 158.6500 },
+    { name: "Южно-Сахалинск", region: "Сахалинская обл.", lat: 46.9667, lon: 142.7333 },
+    { name: "Уссурийск", region: "Приморский край", lat: 43.8000, lon: 131.9500 },
+    { name: "Находка", region: "Приморский край", lat: 42.8167, lon: 132.8833 },
+    { name: "Артём", region: "Приморский край", lat: 43.3500, lon: 132.1833 },
+    { name: "Тольятти", region: "Самарская обл.", lat: 53.5167, lon: 49.4167 },
+    { name: "Сызрань", region: "Самарская обл.", lat: 53.1667, lon: 48.4667 },
+    { name: "Набережные Челны", region: "Татарстан", lat: 55.7000, lon: 52.3167 },
+    { name: "Нижнекамск", region: "Татарстан", lat: 55.6333, lon: 51.8167 },
+    { name: "Альметьевск", region: "Татарстан", lat: 54.9000, lon: 52.3000 },
+    { name: "Зеленодольск", region: "Татарстан", lat: 55.8500, lon: 48.5167 },
+    { name: "Стерлитамак", region: "Башкортостан", lat: 53.6333, lon: 55.9500 },
+    { name: "Салават", region: "Башкортостан", lat: 53.3667, lon: 55.9333 },
+    { name: "Нефтекамск", region: "Башкортостан", lat: 56.0833, lon: 54.2500 },
+    { name: "Октябрьский", region: "Башкортостан", lat: 54.4833, lon: 53.4667 },
+    { name: "Димитровград", region: "Ульяновская обл.", lat: 54.2333, lon: 49.5833 },
+    { name: "Балаково", region: "Саратовская обл.", lat: 52.0333, lon: 47.8000 },
+    { name: "Энгельс", region: "Саратовская обл.", lat: 51.4833, lon: 46.1167 },
+    { name: "Вольск", region: "Саратовская обл.", lat: 52.0500, lon: 47.3833 },
+    { name: "Каменск-Уральский", region: "Свердловская обл.", lat: 56.4000, lon: 61.9333 },
+    { name: "Первоуральск", region: "Свердловская обл.", lat: 56.9167, lon: 59.9500 },
+    { name: "Серов", region: "Свердловская обл.", lat: 59.6000, lon: 60.5667 },
+    { name: "Новоуральск", region: "Свердловская обл.", lat: 57.2500, lon: 60.0833 },
+    { name: "Миасс", region: "Челябинская обл.", lat: 55.0500, lon: 60.1000 },
+    { name: "Копейск", region: "Челябинская обл.", lat: 55.1000, lon: 61.6167 },
+    { name: "Златоуст", region: "Челябинская обл.", lat: 55.1667, lon: 59.6667 },
+    { name: "Озёрск", region: "Челябинская обл.", lat: 55.7500, lon: 60.7000 },
+    { name: "Троицк", region: "Челябинская обл.", lat: 54.0833, lon: 61.5667 },
+    { name: "Магнитогорск", region: "Челябинская обл.", lat: 53.3833, lon: 59.0333 },
+    { name: "Орск", region: "Оренбургская обл.", lat: 51.2000, lon: 58.5667 },
+    { name: "Бузулук", region: "Оренбургская обл.", lat: 52.7833, lon: 52.2667 },
+    { name: "Новотроицк", region: "Оренбургская обл.", lat: 51.2000, lon: 58.3000 }
+];
+
+// === ПЕРЕВОДЫ ИНТЕРФЕЙСА ===
+const I18N = {
+    ru: { 
+        title:"Анти ИИ Космос", subtitle:"Определение созвездий", myCity:"Мой город", language:"Язык",
+        photo:"Сделать фото", photoDesc:"Сохранить небо", video:"Видео", videoDesc:"Запись неба",
+        howto:"Как пользоваться", howtoDesc:"Инструкция", support:"Поддержать проект", supportDesc:"Помочь развитию",
+        selectLang:"🗣️ Выберите язык", ready:"Готов", mode:"Режим", now:"Сейчас", eve:"Вечер", night:"Ночь", morn:"Утро",
+        spr:"Весна", sum:"Лето", aut:"Осень", win:"Зима", back:"Назад", supportFree:"Проект бесплатный навсегда",
+        copy:"Скопировать номер", ourProjects:"🚀 Наши проекты",
+        instrCity:"🏙️ Мой город", instrCityDesc:"Выберите свой город из списка — приложение покажет координаты и созвездие над ним.",
+        instrTime:"🕐 Время и сезон", instrTimeDesc:"Кнопки Вечер/Ночь/Утро показывают небо в разное время. Сезонные кнопки меняют дату.",
+        instrPhoto:"📷 Фото", instrPhotoDesc:"Сохраните изображение неба с наложенными созвездиями. Работает офлайн.",
+        close:"Закрыть", constellation:"Созвездие", zenith:"в зените", coords:"Координаты"
+    },
+    tt: {
+        title:"Анти ИИ Космос", subtitle:"Йолдызлыкларны билгеләү", myCity:"Минем шәһәр", language:"Тел",
+        photo:"Рәсем төшерү", photoDesc:"Күкне саклау", video:"Видео", videoDesc:"Күкне яздыру",
+        howto:"Куллану", howtoDesc:"Инструкция", support:"Проектка ярдәм", supportDesc:"Үсешкә ярдәм",
+        selectLang:"🗣️ Телне сайлагыз", ready:"Әзер", mode:"Режим", now:"Хәзер", eve:"Кич", night:"Төн", morn:"Иртә",
+        spr:"Яз", sum:"Җәй", aut:"Көз", win:"Кыш", back:"Артка", supportFree:"Проект мәңге бушлай",
+        copy:"Номерны күчерү", ourProjects:"🚀 Безнең проектлар",
+        instrCity:"🏙️ Минем шәһәр", instrCityDesc:"Исемлектән шәһәрегезне сайлагыз — приложение координатларны һәм өстегездәге йолдызлыкны күрсәтә.",
+        instrTime:"🕐 Вакыт һәм сезон", instrTimeDesc:"Кич/Төн/Иртә төймәләре күкне төрле вакытта күрсәтә. Сезон төймәләре датаны үзгәртә.",
+        instrPhoto:"📷 Рәсем", instrPhotoDesc:"Йолдызлыклар белән күк рәсемен саклагыз. Офлайн эшли.",
+        close:"Ябу", constellation:"Йолдызлык", zenith:"зенитта", coords:"Координатлар"
+    },
+    ce: {
+        title:"Анти ИИ Космос", subtitle:"Седан чкъоьранаш билгалъяр", myCity:"Соь гӀала", language:"Мотт",
+        photo:"Сурт даккхар", photoDesc:"Стен Ӏалашъяр", video:"Видео", videoDesc:"Стен йаздар",
+        howto:"Лелор", howtoDesc:"Инструкция", support:"Проектан гӀо", supportDesc:"Кхиарна гӀо",
+        selectLang:"🗣️ Мотт хажа", ready:"Кийча", mode:"Режим", now:"ХӀинца", eve:"Сайре", night:"Буьйса", morn:"Ӏуьйре",
+        spr:"БӀаьсте", sum:"Аьхке", aut:"Гуьйре", win:"Ӏа", back:"Юха", supportFree:"Проект цаӀ маьрша ду",
+        copy:"Номар дӀаяккхар", ourProjects:"🚀 Ткъан проекташ",
+        instrCity:"🏙️ Соь гӀала", instrCityDesc:"Исемлистера шен гӀала хажа — приложение координаташ а, тӀехулара седан чкъоьр а гойту.",
+        instrTime:"🕐 Хенан а, сезон а", instrTimeDesc:"Сайре/Буьйса/Ӏуьйре кнопкаш стен хенан гойту. Сезон кнопкаш датан хуьйцу.",
+        instrPhoto:"📷 Сурт", instrPhotoDesc:"Седан чкъоьршца стен сурт Ӏалашъе. Офлайн болх бо.",
+        close:"ДӀакъовлар", constellation:"Седан чкъоьр", zenith:"зенит тӀехь", coords:"Координаташ"
+    },
+    ba: {
+        title:"Анти ИИ Космос", subtitle:"Йондоҙлоҡтарҙы билдәләү", myCity:"Минең ҡалам", language:"Тел",
+        photo:"Рәсем төшөрөү", photoDesc:"Күкте һаҡлау", video:"Видео", videoDesc:"Күкте яҙҙырыу",
+        howto:"Ҡулланыу", howtoDesc:"Инструкция", support:"Проектҡа ярҙам", supportDesc:"Үҫешкә ярҙам",
+        selectLang:"🗣️ Телде һайлағыҙ", ready:"Әҙер", mode:"Режим", now:"Хәҙер", eve:"Кис", night:"Төн", morn:"Иртә",
+        spr:"Яҙ", sum:"Йәй", aut:"Көҙ", win:"Ҡыш", back:"Артҡа", supportFree:"Проект мәңгегә бушлай",
+        copy:"Номерҙы күсереү", ourProjects:"🚀 Беҙҙең проекттар",
+        instrCity:"🏙️ Минең ҡалам", instrCityDesc:"Исемлектән ҡалағыҙҙы һайлағыҙ — приложение координаталарҙы һәм өҫтөгөҙҙәге йондоҙлоҡто күрһәтә.",
+        instrTime:"🕐 Ваҡыт һәм миҙгел", instrTimeDesc:"Кис/Төн/Иртә төймәләре күкте төрлө ваҡытта күрһәтә. Миҙгел төймәләре датаны үҙгәртә.",
+        instrPhoto:"📷 Рәсем", instrPhotoDesc:"Йондоҙлоҡтар менән күк рәсемен һаҡлағыҙ. Офлайн эшләй.",
+        close:"Ябыу", constellation:"Йондоҙлоҡ", zenith:"зенитта", coords:"Координаталар"
+    },
+    cv: {
+        title:"Анти ИИ Космос", subtitle:"Çăлтăрлăхсене паллани", myCity:"Маннӑн хулам", language:"Чĕлхе",
+        photo:"Ӳкерчĕк тума", photoDesc:"Тӳпене упрани", video:"Видео", videoDesc:"Тӳпене ҫырса илни",
+        howto:"Усӑ курни", howtoDesc:"Инструкция", support:"Проекта пулӑшни", supportDesc:"Ӳсме пулӑшни",
+        selectLang:"🗣️ Чĕлхене суйлӑр", ready:"Хатĕр", mode:"Режим", now:"Халь", eve:"Каҫ", night:"Ҫĕр", morn:"Ир",
+        spr:"Ҫур", sum:"Ҫу", aut:"Кĕр", win:"Хĕл", back:"Каялла", supportFree:"Проект яланлӑха тӳлевсĕр",
+        copy:"Номера куҫарни", ourProjects:"🚀 Пирĕн проектсем",
+        instrCity:"🏙️ Маннӑн хулам", instrCityDesc:"Ят-йышран хула суйлӑр — приложение координатсене тата ҫинҫе ҫӑлтӑрлӑха кӑтартать.",
+        instrTime:"🕐 Вӑхӑт тата сезон", instrTimeDesc:"Каҫ/Ҫĕр/Ир кнописем тӳпене тĕрлĕ вӑхӑтра кӑтартаҫҫĕ. Сезон кнописем даттине улӑштарать.",
+        instrPhoto:"📷 Ӳкерчĕк", instrPhotoDesc:"Çăлтăрлăхсемпе тӳпе ӳкерчĕкне упрӑр. Офлайн ĕçлет.",
+        close:"Хупни", constellation:"Çăлтăрлăх", zenith:"зенитре", coords:"Координатсем"
+    }
+};
+
+// === ЗВЁЗДЫ ===
+const STARS = [
+    {id:1, ra:2.53, dec:89.26, mag:2.0, name:{ru:"Полярная",tt:"Поляр йолдызы",ce:"Полярни седан чкъоьр",ba:"Поляр йондоҙо",cv:"Поляр ҫăлтăрĕ"}},
+    {id:2, ra:11.06, dec:61.75, mag:1.8, name:{ru:"Дубхе",tt:"Дубхе",ce:"Дубхе",ba:"Дубхе",cv:"Дубхе"}},
+    {id:3, ra:11.03, dec:56.38, mag:2.3, name:{ru:"Мерак",tt:"Мерак",ce:"Мерак",ba:"Мерак",cv:"Мерак"}},
+    {id:4, ra:11.82, dec:53.69, mag:2.4, name:{ru:"Фекда",tt:"Фекда",ce:"Фекда",ba:"Фекда",cv:"Фекда"}},
+    {id:5, ra:12.17, dec:57.03, mag:3.3, name:{ru:"Мегрец",tt:"Мегрец",ce:"Мегрец",ba:"Мегрец",cv:"Мегрец"}},
+    {id:6, ra:12.83, dec:55.96, mag:1.8, name:{ru:"Алиот",tt:"Алиот",ce:"Алиот",ba:"Алиот",cv:"Алиот"}},
+    {id:7, ra:13.20, dec:54.93, mag:2.2, name:{ru:"Мицар",tt:"Мицар",ce:"Мицар",ba:"Мицар",cv:"Мицар"}},
+    {id:8, ra:13.75, dec:49.31, mag:1.9, name:{ru:"Алькаид",tt:"Алькаид",ce:"Алькаид",ba:"Алькаид",cv:"Алькаид"}},
+    {id:9, ra:5.92, dec:7.41, mag:0.5, name:{ru:"Бетельгейзе",tt:"Бетельгейзе",ce:"Бетельгейзе",ba:"Бетельгейзе",cv:"Бетельгейзе"}},
+    {id:10, ra:5.24, dec:-8.20, mag:0.1, name:{ru:"Ригель",tt:"Ригель",ce:"Ригель",ba:"Ригель",cv:"Ригель"}},
+    {id:11, ra:6.75, dec:-16.72, mag:-1.5, name:{ru:"Сириус",tt:"Сириус",ce:"Сириус",ba:"Сириус",cv:"Сириус"}},
+    {id:12, ra:18.61, dec:38.78, mag:0.0, name:{ru:"Вега",tt:"Вега",ce:"Вега",ba:"Вега",cv:"Вега"}},
+    {id:13, ra:14.26, dec:19.18, mag:-0.05, name:{ru:"Арктур",tt:"Арктур",ce:"Арктур",ba:"Арктур",cv:"Арктур"}}
+];
+
+const LINES = [[2,3],[3,5],[5,6],[6,7],[7,8],[2,4],[4,5],[9,10],[9,11],[12,13]];
+const SEASONS = {spr:{m:3,d:21}, sum:{m:6,d:21}, aut:{m:9,d:23}, win:{m:12,d:21}};
+
+// === КАРТА СОЗВЕЗДИЙ ===
+const CELESTIAL_MAP = [
+    { raStart: 0, raEnd: 2, name: {ru:"КАССИОПЕЯ",tt:"КАССИОПЕЯ",ce:"КАССИОПЕЯ",ba:"КАССИОПЕЯ",cv:"КАССИОПЕЯ"} },
+    { raStart: 2, raEnd: 4, name: {ru:"ПЕРСЕЙ",tt:"ПЕРСЕЙ",ce:"ПЕРСЕЙ",ba:"ПЕРСЕЙ",cv:"ПЕРСЕЙ"} },
+    { raStart: 4, raEnd: 6, name: {ru:"ВОЗНИЧИЙ",tt:"ВОЗНИЧИЙ",ce:"ВОЗНИЧИЙ",ba:"ВОЗНИЧИЙ",cv:"ВОЗНИЧИЙ"} },
+    { raStart: 5.5, raEnd: 7.5, name: {ru:"ОРИОН",tt:"ОРИОН",ce:"ОРИОН",ba:"ОРИОН",cv:"ОРИОН"} },
+    { raStart: 7, raEnd: 9, name: {ru:"БЛИЗНЕЦЫ",tt:"БЛИЗНЕЦЫ",ce:"БЛИЗНЕЦЫ",ba:"БЛИЗНЕЦЫ",cv:"БЛИЗНЕЦЫ"} },
+    { raStart: 9, raEnd: 12, name: {ru:"МАЛЫЙ ПЁС",tt:"МАЛЫЙ ПЁС",ce:"МАЛЫЙ ПЁС",ba:"МАЛЫЙ ПЁС",cv:"МАЛЫЙ ПЁС"} },
+    { raStart: 10, raEnd: 15, name: {ru:"БОЛЬШАЯ МЕДВЕДИЦА",tt:"ОЛЫ ҖИДЕГӘН",ce:"ЙОКХА ЧУЙ",ba:"ОЛО ЕТЕҮ",cv:"АСЛӐ ҪӖЛӖХ"} },
+    { raStart: 15, raEnd: 17, name: {ru:"ВОЛОПАС",tt:"ВОЛОПАС",ce:"ВОЛОПАС",ba:"ВОЛОПАС",cv:"ВОЛОПАС"} },
+    { raStart: 17, raEnd: 19, name: {ru:"ГЕРКУЛЕС",tt:"ГЕРКУЛЕС",ce:"ГЕРКУЛЕС",ba:"ГЕРКУЛЕС",cv:"ГЕРКУЛЕС"} },
+    { raStart: 18, raEnd: 20, name: {ru:"ЛЕБЕДЬ",tt:"ЛЕБЕДЬ",ce:"ЛЕБЕДЬ",ba:"ЛЕБЕДЬ",cv:"ЛЕБЕДЬ"} },
+    { raStart: 19, raEnd: 21, name: {ru:"ЛИСИЧКА",tt:"ЛИСИЧКА",ce:"ЛИСИЧКА",ba:"ЛИСИЧКА",cv:"ЛИСИЧКА"} },
+    { raStart: 20, raEnd: 23, name: {ru:"ПЕГАС",tt:"ПЕГАС",ce:"ПЕГАС",ba:"ПЕГАС",cv:"ПЕГАС"} },
+    { raStart: 22, raEnd: 24, name: {ru:"АНДРОМЕДА",tt:"АНДРОМЕДА",ce:"АНДРОМЕДА",ba:"АНДРОМЕДА",cv:"АНДРОМЕДА"} }
+];
+
+// === СОСТОЯНИЕ ===
+let state = { lang:'ru', season:'sum', timeMode:'real', az:0, pitch:0, selectedCity: null };
+let currentStream = null;
+let isTranslating = false;
+let cityUpdateInterval = null;
+
+// === ПЕРЕВОД ===
+function t(k) { 
+    const dict = I18N[state.lang] || I18N.ru;
+    return dict[k] || I18N.ru[k] || k; 
+}
+
+function applyLang() {
+    if (isTranslating) return;
+    isTranslating = true;
+    try {
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            const val = t(key);
+            if (val && el.textContent !== val) el.textContent = val;
+        });
+        const titleEl = document.getElementById('t-title');
+        const subtitleEl = document.getElementById('t-subtitle');
+        if (titleEl) titleEl.textContent = t('title');
+        if (subtitleEl) subtitleEl.textContent = t('subtitle');
+        const langLabel = document.getElementById('currentLang');
+        if (langLabel) langLabel.textContent = LANGUAGES[state.lang].native;
+        updateStatus();
+        renderCityList();
+        if (state.selectedCity) updateCityInfo();
+    } catch(e) { console.error(e); }
+    finally { isTranslating = false; }
+}
+
+// === РАСЧЁТ СОЗВЕЗДИЯ ===
+function getDateForCity() {
+    if (!state.selectedCity) {
+        const now = new Date();
+        const y = now.getFullYear();
+        const s = SEASONS[state.season];
+        let h = now.getHours();
+        if (state.timeMode === 'eve') h = 19;
+        if (state.timeMode === 'night') h = 0;
+        if (state.timeMode === 'morn') h = 5;
+        return new Date(y, s.m - 1, s.d, h, now.getMinutes());
+    }
+    const nowUTC = new Date();
+    const city = state.selectedCity;
+    const localOffsetHours = city.lon / 15;
+    const localTime = new Date(nowUTC.getTime() + localOffsetHours * 3600000);
+    const y = localTime.getFullYear();
+    const s = SEASONS[state.season];
+    let h = localTime.getHours();
+    if (state.timeMode === 'eve') h = 19;
+    if (state.timeMode === 'night') h = 0;
+    if (state.timeMode === 'morn') h = 5;
+    return new Date(y, s.m - 1, s.d, h, localTime.getMinutes());
+}
+
+function calculateLST(lon, date) {
+    const jd = date.getTime() / 86400000 + 2440587.5;
+    let d = jd - 2451545.0;
+    let gst = (18.697374558 + 24.06570982441908 * d) % 24;
+    if (gst < 0) gst += 24;
+    let lst = (gst + lon / 15) % 24;
+    if (lst < 0) lst += 24;
+    return lst;
+}
+
+function getConstellationByRA(ra) {
+    for (const c of CELESTIAL_MAP) {
+        if (ra >= c.raStart && ra <= c.raEnd) return c.name[state.lang] || c.name.ru;
+    }
+    return state.lang === 'ru' ? "ЗВЕЗДНОЕ ПОЛЕ" : "ЙОЛДЫЗЛЫК";
+}
+
+function getCurrentConstellation(lat, lon) {
+    const date = getDateForCity();
+    const lst = calculateLST(lon, date);
+    return getConstellationByRA(lst);
+}
+
+// === ЭКРАН ГОРОДА ===
+function showCityScreen() {
+    showScreen('city');
+    renderCityList();
+    if (state.selectedCity) updateCityInfo();
+    if (cityUpdateInterval) clearInterval(cityUpdateInterval);
+    cityUpdateInterval = setInterval(() => { if (state.selectedCity) updateCityInfo(); }, 1000);
+}
+
+function backToMenuFromCity() {
+    if (cityUpdateInterval) clearInterval(cityUpdateInterval);
+    backToMenu();
+}
+
+function renderCityList() {
+    const container = document.getElementById('citiesList');
+    if (!container) return;
+    container.innerHTML = '<div style="padding:10px; color:#94a3b8;">🏙️ ' + t('instrCityDesc').split('—')[0] + ' (' + RUSSIA_CITIES.length + '):</div>';
+    RUSSIA_CITIES.forEach(city => {
+        const div = document.createElement('div');
+        div.className = 'city-select-item';
+        const localName = getCityName(city);
+        div.innerHTML = `<div class="city-select-name">${localName}</div><div class="city-select-region">${city.region}</div>`;
+        div.onclick = () => {
+            state.selectedCity = city;
+            localStorage.setItem('selectedCity', JSON.stringify(city));
+            updateCityInfo();
+        };
+        container.appendChild(div);
+    });
+}
+
+function updateCityInfo() {
+    if (!state.selectedCity) return;
+    const city = state.selectedCity;
+    const cityNameEl = document.getElementById('selectedCityName');
+    const cityCoordsEl = document.getElementById('selectedCityCoords');
+    const cityConstellationEl = document.getElementById('selectedCityConstellation');
+    const cityTimeEl = document.getElementById('selectedCityTime');
+    const cityDateEl = document.getElementById('selectedCityDate');
+    const cityDesc = document.getElementById('currentCityDesc');
+    
+    const localName = getCityName(city);
+    
+    if (cityNameEl) cityNameEl.textContent = localName;
+    if (cityCoordsEl) cityCoordsEl.textContent = `${t('coords')}: ${city.lat.toFixed(4)}° • ${city.lon.toFixed(4)}°`;
+    if (cityDesc) cityDesc.textContent = localName;
+    
+    const constellation = getCurrentConstellation(city.lat, city.lon);
+    if (cityConstellationEl) cityConstellationEl.innerHTML = `✨ ${t('constellation')} ${t('zenith')}:<br><strong style="font-size:22px;">${constellation}</strong> ✨`;
+    
+    const nowUTC = new Date();
+    const localOffsetHours = city.lon / 15;
+    const localTime = new Date(nowUTC.getTime() + localOffsetHours * 3600000);
+    
+    if (cityTimeEl) cityTimeEl.textContent = localTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' });
+    if (cityDateEl) cityDateEl.textContent = localTime.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    
+    document.getElementById('cityInfo').classList.remove('hidden');
+}
+
+// === UI ФУНКЦИИ ===
+function showScreen(screen) {
+    document.querySelectorAll('.section-screen, .menu-screen').forEach(el => { el.classList.remove('active'); el.style.display = 'none'; });
+    if (screen === 'main') { const menu = document.getElementById('menuScreen'); menu.style.display = 'flex'; setTimeout(() => menu.classList.add('active'), 10); }
+    else if (screen === 'city') { const el = document.getElementById('cityScreen'); if (el) { el.style.display = 'flex'; setTimeout(() => el.classList.add('active'), 10); } }
+    else { const id = screen === 'instruction' ? 'instructionScreen' : (screen === 'support' ? 'supportScreen' : 'skyScreen'); const el = document.getElementById(id); if (el) { el.style.display = 'flex'; setTimeout(() => el.classList.add('active'), 10); } }
+}
+
+function backToMenu() { if (cityUpdateInterval) clearInterval(cityUpdateInterval); showScreen('main'); }
+
+function showSky(mode) {
+    const skyTitle = document.getElementById('skyTitle');
+    const skyAction = document.getElementById('skyActionBtn');
+    if (skyTitle) skyTitle.textContent = (mode === 'photo' ? '📷 ' : '🎥 ') + t(mode === 'photo' ? 'photo' : 'video');
+    if (skyAction) skyAction.textContent = (mode === 'photo' ? '📷 ' : '🎥 ') + t('photo');
+    showScreen('sky');
+    startCamera();
+    updateStatus();
+}
+
+function setTimeMode(mode) { state.timeMode = mode; document.querySelectorAll('.sky-controls .mini-btn').forEach(b => b.classList.remove('active')); const btn = document.getElementById('btn-' + mode); if (btn) btn.classList.add('active'); updateStatus(); }
+function setSeason(season) { state.season = season; document.querySelectorAll('.sky-controls .mini-btn').forEach(b => b.classList.remove('active')); const btn = document.getElementById('btn-' + season); if (btn) btn.classList.add('active'); updateStatus(); }
+function updateStatus() { const timeNames = {real:t('now'), eve:t('eve'), night:t('night'), morn:t('morn')}; const seasonNames = {spr:t('spr'), sum:t('sum'), aut:t('aut'), win:t('win')}; const modeText = document.getElementById('statusModeText'); if (modeText) modeText.textContent = `${timeNames[state.timeMode]} • ${seasonNames[state.season]}`; const timeEl = document.getElementById('statusTime'); if (timeEl) timeEl.textContent = new Date().toLocaleTimeString(); }
+
+function openLangModal() {
+    const container = document.getElementById('langList');
+    if (container) {
+        container.innerHTML = '';
+        for (const [code, data] of Object.entries(LANGUAGES)) {
+            const div = document.createElement('div');
+            div.className = 'modal-lang-item' + (state.lang === code ? ' selected' : '');
+            div.innerHTML = `<span>${data.name}</span><span style="color:#66aa88;font-size:13px">${data.native}</span>`;
+            div.onclick = () => { state.lang = code; localStorage.setItem('appLang', code); applyLang(); closeLangModal(); };
+            container.appendChild(div);
+        }
+    }
+    document.getElementById('langModal').classList.add('open');
+}
+
+function closeLangModal() { document.getElementById('langModal').classList.remove('open'); }
+function copyPhoneNumber() { navigator.clipboard.writeText("8-920-227-56-76"); alert("📋 " + t('copy')); }
+
+// === КАМЕРА И ОТРИСОВКА ===
+async function startCamera() { const video = document.getElementById('video'); try { if (currentStream) currentStream.getTracks().forEach(t => t.stop()); const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); currentStream = stream; video.srcObject = stream; video.style.display = 'block'; startDrawing(); } catch (err) { if (video) video.style.display = 'none'; startDrawing(); } }
+function startSensors() { const handler = (e) => { if (e.alpha !== null) state.az = e.alpha; if (e.beta !== null) state.pitch = e.beta; }; if (typeof DeviceOrientationEvent.requestPermission === 'function') { document.body.addEventListener('click', () => { DeviceOrientationEvent.requestPermission().then(p => { if (p === 'granted') window.addEventListener('deviceorientation', handler); }).catch(()=>{}); }, { once: true }); } else { window.addEventListener('deviceorientation', handler); } }
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+function toHoriz(ra, dec, lat, lon, date) { const jd = date.getTime() / 864e5 + 2440587.5; const T = (jd - 2451545.0) / 36525.0; let GST = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T - T * T * T / 38710000; GST = ((GST % 360) + 360) % 360; const LST = GST + lon; const RA_deg = ra * 15; const HA = LST - RA_deg; const decRad = dec * D2R, latRad = lat * D2R, HARad = HA * D2R; const sinAlt = Math.sin(decRad)*Math.sin(latRad) + Math.cos(decRad)*Math.cos(latRad)*Math.cos(HARad); const alt = Math.asin(Math.max(-1, Math.min(1, sinAlt))) * R2D; const cosAz = (Math.sin(decRad) - Math.sin(alt*D2R)*Math.sin(latRad)) / (Math.cos(alt*D2R)*Math.cos(latRad) + 1e-10); let azR = Math.acos(Math.max(-1, Math.min(1, cosAz))); if (Math.sin(HARad) > 0) azR = 2 * Math.PI - azR; return { az: azR * R2D, alt }; }
+function project(az, alt, camAz, camAlt, fov, w, h) { let dAz = az - camAz; if (dAz > 180) dAz -= 360; if (dAz < -180) dAz += 360; const dAlt = alt - camAlt; if (Math.abs(dAz) > fov/2+20 || Math.abs(dAlt) > fov/2+20) return null; return { x: w/2 + (dAz/fov)*w, y: h/2 - (dAlt/fov)*h }; }
+function startDrawing() { const canvas = document.getElementById('star-canvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); function draw() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; ctx.clearRect(0, 0, canvas.width, canvas.height); const date = getDateForCity(); const fov = 60; ctx.lineWidth = 2; ctx.strokeStyle = '#60a5fa'; ctx.beginPath(); LINES.forEach(([a,b]) => { const s1 = STARS.find(s => s.id === a), s2 = STARS.find(s => s.id === b); if (!s1 || !s2) return; const p1 = toHoriz(s1.ra, s1.dec, 55, 37, date); const p2 = toHoriz(s2.ra, s2.dec, 55, 37, date); const c1 = project(p1.az, p1.alt, state.az, state.pitch, fov, canvas.width, canvas.height); const c2 = project(p2.az, p2.alt, state.az, state.pitch, fov, canvas.width, canvas.height); if (c1 && c2) { ctx.moveTo(c1.x, c1.y); ctx.lineTo(c2.x, c2.y); } }); ctx.stroke(); ctx.fillStyle = '#fff'; ctx.font = '12px system-ui'; STARS.forEach(s => { const p = toHoriz(s.ra, s.dec, 55, 37, date); const c = project(p.az, p.alt, state.az, state.pitch, fov, canvas.width, canvas.height); if (c) { ctx.beginPath(); ctx.arc(c.x, c.y, Math.max(1.5, 3.5 - s.mag), 0, Math.PI*2); ctx.fill(); if (s.mag < 1.5) { const name = s.name[state.lang] || s.name.ru; ctx.fillText(name, c.x + 8, c.y + 4); } } }); requestAnimationFrame(draw); } draw(); }
+function takePhoto() { const video = document.getElementById('video'); const canvas = document.getElementById('star-canvas'); if (!canvas) return; const tempC = document.createElement('canvas'); tempC.width = canvas.width; tempC.height = canvas.height; const tCtx = tempC.getContext('2d'); if (video && video.srcObject && video.style.display !== 'none') tCtx.drawImage(video, 0, 0, tempC.width, tempC.height); else { tCtx.fillStyle = '#000'; tCtx.fillRect(0, 0, tempC.width, tempC.height); } tCtx.drawImage(canvas, 0, 0); const link = document.createElement('a'); link.download = 'anti_ai_cosmos.png'; link.href = tempC.toDataURL(); link.click(); }
+
+// === АНИМАЦИЯ СОЗВЕЗДИЙ ===
+let animCanvas, animCtx, animFrame;
+let animProgress = 0;
+let animStars = [];
+let animLines = [];
+let animConstellation = null;
+
+// === РАСШИРЕННАЯ БАЗА СОЗВЕЗДИЙ С НАСТОЯЩИМИ НАЗВАНИЯМИ ЗВЁЗД ===
+const ANIMATION_CONSTELLATIONS = {
+    'БОЛЬШАЯ МЕДВЕДИЦА': {
+        color: '#FF3366',
+        stars: [
+            { name: 'Дубхе', x: 0.4, y: 0.3, mag: 1.8 },
+            { name: 'Мерак', x: 0.35, y: 0.45, mag: 2.3 },
+            { name: 'Фекда', x: 0.5, y: 0.45, mag: 2.4 },
+            { name: 'Мегрец', x: 0.55, y: 0.3, mag: 3.3 },
+            { name: 'Алиот', x: 0.7, y: 0.25, mag: 1.8 },
+            { name: 'Мицар', x: 0.85, y: 0.2, mag: 2.2 },
+            { name: 'Алькаид', x: 1.0, y: 0.15, mag: 1.9 }
+        ],
+        lines: [[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]]
+    },
+    'ВОЛОПАС': {
+        color: '#33FF66',
+        stars: [
+            { name: 'Арктур', x: 0.5, y: 0.6, mag: -0.05 },
+            { name: 'Изар', x: 0.55, y: 0.75, mag: 2.4 },
+            { name: 'Муфрид', x: 0.4, y: 0.65, mag: 2.7 },
+            { name: 'Сегин', x: 0.45, y: 0.7, mag: 3.4 }
+        ],
+        lines: [[0,1],[0,2],[1,2],[2,3]]
+    },
+    'ОРИОН': {
+        color: '#33CCFF',
+        stars: [
+            { name: 'Бетельгейзе', x: 0.3, y: 0.5, mag: 0.5 },
+            { name: 'Ригель', x: 0.25, y: 0.7, mag: 0.1 },
+            { name: 'Беллатрикс', x: 0.45, y: 0.5, mag: 1.6 },
+            { name: 'Минтака', x: 0.35, y: 0.6, mag: 2.2 },
+            { name: 'Альнилам', x: 0.33, y: 0.62, mag: 1.7 },
+            { name: 'Альнитак', x: 0.31, y: 0.64, mag: 1.8 },
+            { name: 'Саиф', x: 0.28, y: 0.75, mag: 2.1 }
+        ],
+        lines: [[0,2],[2,3],[3,4],[4,5],[5,1],[1,0],[1,6]]
+    },
+    'КАССИОПЕЯ': {
+        color: '#FFCC33',
+        stars: [
+            { name: 'Шедар', x: 0.2, y: 0.3, mag: 2.2 },
+            { name: 'Каф', x: 0.15, y: 0.25, mag: 2.3 },
+            { name: 'Гамма Кас', x: 0.25, y: 0.28, mag: 2.1 },
+            { name: 'Рукбах', x: 0.3, y: 0.35, mag: 2.7 },
+            { name: 'Сегин', x: 0.35, y: 0.32, mag: 3.4 }
+        ],
+        lines: [[0,1],[1,2],[2,3],[3,4]]
+    },
+    'ЛЕБЕДЬ': {
+        color: '#CC66FF',
+        stars: [
+            { name: 'Денеб', x: 0.5, y: 0.2, mag: 1.3 },
+            { name: 'Садр', x: 0.5, y: 0.35, mag: 2.2 },
+            { name: 'Альбирео', x: 0.55, y: 0.45, mag: 3.1 },
+            { name: 'Гьенах', x: 0.45, y: 0.45, mag: 2.5 },
+            { name: 'Дельта Леб', x: 0.48, y: 0.4, mag: 2.9 }
+        ],
+        lines: [[0,1],[1,2],[1,3],[1,4]]
+    },
+    'ЛИРА': {
+        color: '#FF9933',
+        stars: [
+            { name: 'Вега', x: 0.6, y: 0.35, mag: 0.0 },
+            { name: 'Шелиак', x: 0.58, y: 0.4, mag: 3.4 },
+            { name: 'Сулафат', x: 0.62, y: 0.38, mag: 3.2 },
+            { name: 'Дельта Лиры', x: 0.59, y: 0.42, mag: 4.2 }
+        ],
+        lines: [[0,1],[0,2],[1,3],[2,3]]
+    },
+    'ОРЕЛ': {
+        color: '#33FFFF',
+        stars: [
+            { name: 'Альтаир', x: 0.65, y: 0.55, mag: 0.8 },
+            { name: 'Таразед', x: 0.63, y: 0.58, mag: 2.7 },
+            { name: 'Альшаин', x: 0.67, y: 0.53, mag: 3.7 }
+        ],
+        lines: [[0,1],[0,2]]
+    },
+    'ПЕГАС': {
+        color: '#FF6699',
+        stars: [
+            { name: 'Маркаб', x: 0.3, y: 0.2, mag: 2.5 },
+            { name: 'Шеат', x: 0.25, y: 0.3, mag: 2.4 },
+            { name: 'Альгениб', x: 0.2, y: 0.15, mag: 2.8 },
+            { name: 'Эниф', x: 0.35, y: 0.25, mag: 2.4 }
+        ],
+        lines: [[0,1],[1,2],[2,0],[0,3]]
+    },
+    'АНДРОМЕДА': {
+        color: '#9966FF',
+        stars: [
+            { name: 'Альферац', x: 0.25, y: 0.1, mag: 2.1 },
+            { name: 'Мирах', x: 0.2, y: 0.15, mag: 2.1 },
+            { name: 'Альмак', x: 0.15, y: 0.2, mag: 2.1 },
+            { name: 'Дельта Андр', x: 0.22, y: 0.18, mag: 3.3 }
+        ],
+        lines: [[0,1],[1,2],[1,3]]
+    },
+    'ПЕРСЕЙ': {
+        color: '#FF9966',
+        stars: [
+            { name: 'Мирфак', x: 0.15, y: 0.4, mag: 1.8 },
+            { name: 'Алголь', x: 0.1, y: 0.45, mag: 2.1 },
+            { name: 'Менкиб', x: 0.18, y: 0.42, mag: 2.9 }
+        ],
+        lines: [[0,1],[0,2]]
+    },
+    'ТЕЛЕЦ': {
+        color: '#FF6633',
+        stars: [
+            { name: 'Альдебаран', x: 0.25, y: 0.5, mag: 0.9 },
+            { name: 'Эль-Нат', x: 0.22, y: 0.48, mag: 1.7 },
+            { name: 'Альциона', x: 0.2, y: 0.45, mag: 2.9 },
+            { name: 'Атлас', x: 0.18, y: 0.47, mag: 3.6 }
+        ],
+        lines: [[0,1],[0,2],[2,3]]
+    },
+    'БЛИЗНЕЦЫ': {
+        color: '#66FF99',
+        stars: [
+            { name: 'Кастор', x: 0.6, y: 0.45, mag: 1.6 },
+            { name: 'Поллукс', x: 0.7, y: 0.5, mag: 1.1 },
+            { name: 'Альхена', x: 0.65, y: 0.55, mag: 1.9 },
+            { name: 'Мекбуда', x: 0.62, y: 0.48, mag: 2.9 }
+        ],
+        lines: [[0,1],[0,2],[1,2],[2,3]]
+    },
+    'РАК': {
+        color: '#99FF66',
+        stars: [
+            { name: 'Акубенс', x: 0.55, y: 0.6, mag: 4.3 },
+            { name: 'Альтарф', x: 0.6, y: 0.55, mag: 3.5 },
+            { name: 'Азеллус Бореалис', x: 0.57, y: 0.58, mag: 4.7 }
+        ],
+        lines: [[0,1],[1,2]]
+    },
+    'ЛЕВ': {
+        color: '#FFCC66',
+        stars: [
+            { name: 'Регул', x: 0.75, y: 0.75, mag: 1.4 },
+            { name: 'Денебола', x: 0.9, y: 0.7, mag: 2.1 },
+            { name: 'Альгиеба', x: 0.8, y: 0.65, mag: 2.0 },
+            { name: 'Зосма', x: 0.85, y: 0.72, mag: 2.6 }
+        ],
+        lines: [[0,1],[0,2],[2,3],[3,1]]
+    },
+    'ДЕВА': {
+        color: '#66CCFF',
+        stars: [
+            { name: 'Спика', x: 0.85, y: 0.9, mag: 1.0 },
+            { name: 'Виндемиатрикс', x: 0.75, y: 0.85, mag: 2.8 },
+            { name: 'Поррима', x: 0.8, y: 0.88, mag: 2.7 }
+        ],
+        lines: [[0,1],[1,2],[2,0]]
+    },
+    'ВЕСЫ': {
+        color: '#CC99FF',
+        stars: [
+            { name: 'Зубен эль Шамали', x: 0.5, y: 0.85, mag: 2.6 },
+            { name: 'Зубен эль Генуби', x: 0.55, y: 0.9, mag: 2.8 },
+            { name: 'Брахиум', x: 0.52, y: 0.87, mag: 3.7 }
+        ],
+        lines: [[0,1],[1,2]]
+    },
+    'СКОРПИОН': {
+        color: '#FF3399',
+        stars: [
+            { name: 'Антарес', x: 0.45, y: 0.95, mag: 1.1 },
+            { name: 'Шаула', x: 0.35, y: 0.85, mag: 1.6 },
+            { name: 'Саргас', x: 0.4, y: 0.9, mag: 1.9 },
+            { name: 'Дшубба', x: 0.42, y: 0.92, mag: 2.3 }
+        ],
+        lines: [[0,1],[1,2],[2,3],[3,0]]
+    },
+    'СТРЕЛЕЦ': {
+        color: '#33FFCC',
+        stars: [
+            { name: 'Каус Аустралис', x: 0.4, y: 1.0, mag: 1.8 },
+            { name: 'Нунки', x: 0.45, y: 0.95, mag: 2.1 },
+            { name: 'Асцелла', x: 0.42, y: 0.98, mag: 2.7 }
+        ],
+        lines: [[0,1],[1,2],[2,0]]
+    },
+    'КОЗЕРОГ': {
+        color: '#99CCFF',
+        stars: [
+            { name: 'Дабих', x: 0.3, y: 0.95, mag: 3.0 },
+            { name: 'Альгеди', x: 0.25, y: 0.9, mag: 3.6 },
+            { name: 'Денеб Альгеди', x: 0.28, y: 0.92, mag: 2.9 }
+        ],
+        lines: [[0,1],[1,2],[2,0]]
+    },
+    'ВОДОЛЕЙ': {
+        color: '#66FFCC',
+        stars: [
+            { name: 'Садалмелик', x: 0.35, y: 0.8, mag: 2.9 },
+            { name: 'Садальсууд', x: 0.3, y: 0.75, mag: 2.9 },
+            { name: 'Скат', x: 0.32, y: 0.78, mag: 3.3 }
+        ],
+        lines: [[0,1],[1,2],[2,0]]
+    }
+};
+
+function startConstellationAnimation() {
+    if (!state.selectedCity) return;
+    
+    const overlay = document.getElementById('animation-overlay');
+    const canvas = document.getElementById('animation-canvas');
+    animCanvas = canvas;
+    animCtx = canvas.getContext('2d');
+    
+    // Настройка заголовка
+    const cityName = getCityName(state.selectedCity);
+    document.getElementById('anim-city-name').textContent = `${cityName} • ${state.selectedCity.lat.toFixed(2)}° • ${state.selectedCity.lon.toFixed(2)}°`;
+    
+    // Получаем название созвездия
+    const constellationName = getCurrentConstellation(state.selectedCity.lat, state.selectedCity.lon);
+    document.getElementById('anim-constellation-name').textContent = constellationName;
+    
+    // Инициализация анимации
+    setupAnimation(constellationName);
+    
+    // Показать оверлей
+    overlay.classList.add('active');
+    resizeAnimationCanvas();
+    
+    // Запустить анимацию
+    animProgress = 0;
+    animateConstellation();
+}
+
+function setupAnimation(constellationName) {
+    // Получаем данные созвездия или генерируем случайные
+    const data = ANIMATION_CONSTELLATIONS[constellationName] || generateRandomConstellation(constellationName);
+    animConstellation = data;
+    
+    // Подготовка звезд
+    animStars = data.stars.map(star => ({
+        ...star,
+        drawn: false,
+        pulse: 0
+    }));
+    
+    // Подготовка линий
+    animLines = data.lines.map((line, index) => ({
+        start: line[0],
+        end: line[1],
+        progress: 0,
+        delay: index * 0.1 // Задержка между линиями
+    }));
+}
+
+function generateRandomConstellation(name) {
+    // Генерация случайного созвездия для демонстрации
+    const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+    const starCount = 5 + Math.floor(Math.random() * 4);
+    const stars = [];
+    const lines = [];
+    
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            name: `Звезда ${i+1}`,
+            x: 0.3 + Math.random() * 0.4,
+            y: 0.3 + Math.random() * 0.4,
+            mag: 1 + Math.random() * 3
+        });
+    }
+    
+    // Соединяем звезды последовательно
+    for (let i = 0; i < starCount - 1; i++) {
+        lines.push([i, i+1]);
+    }
+    
+    return { color, stars, lines };
+}
+
+function resizeAnimationCanvas() {
+    if (animCanvas) {
+        animCanvas.width = animCanvas.offsetWidth;
+        animCanvas.height = animCanvas.offsetHeight;
+    }
+}
+
+function animateConstellation() {
+    if (!animCtx || !animCanvas) return;
+    
+    // Очистка
+    animCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    animCtx.fillRect(0, 0, animCanvas.width, animCanvas.height);
+    
+    // Обновление прогресса
+    animProgress += 0.01;
+    
+    // Рисуем фоновые звезды
+    drawBackgroundStars();
+    
+    // Рисуем звезды созвездия
+    animStars.forEach((star, index) => {
+        const x = star.x * animCanvas.width;
+        const y = star.y * animCanvas.height;
+        const size = Math.max(2, 4 - star.mag);
+        
+        // Анимация появления звезд
+        if (animProgress > index * 0.15) {
+            star.pulse = Math.sin(animProgress * 10 + index) * 0.3 + 0.7;
+            
+            animCtx.fillStyle = `rgba(255, 255, 255, ${star.pulse})`;
+            animCtx.shadowBlur = 10;
+            animCtx.shadowColor = '#ffffff';
+            animCtx.beginPath();
+            animCtx.arc(x, y, size * star.pulse, 0, Math.PI * 2);
+            animCtx.fill();
+            animCtx.shadowBlur = 0;
+            
+            // Название звезды (появляется позже)
+            if (animProgress > 0.8 + index * 0.05) {
+                animCtx.fillStyle = animConstellation.color;
+                animCtx.font = '12px Arial';
+                animCtx.fillText(star.name, x + 10, y - 10);
+            }
+        }
+    });
+    
+    // Рисуем линии
+    animLines.forEach(line => {
+        const delayProgress = Math.max(0, (animProgress - line.delay) * 2);
+        if (delayProgress <= 0) return;
+        
+        const star1 = animStars[line.start];
+        const star2 = animStars[line.end];
+        if (!star1 || !star2) return;
+        
+        const x1 = star1.x * animCanvas.width;
+        const y1 = star1.y * animCanvas.height;
+        const x2 = star2.x * animCanvas.width;
+        const y2 = star2.y * animCanvas.height;
+        
+        // Анимация рисования линии
+        const curX = x1 + (x2 - x1) * Math.min(1, delayProgress);
+        const curY = y1 + (y2 - y1) * Math.min(1, delayProgress);
+        
+        animCtx.strokeStyle = animConstellation.color;
+        animCtx.lineWidth = 2;
+        animCtx.lineCap = 'round';
+        animCtx.shadowBlur = 15;
+        animCtx.shadowColor = animConstellation.color;
+        
+        animCtx.beginPath();
+        animCtx.moveTo(x1, y1);
+        animCtx.lineTo(curX, curY);
+        animCtx.stroke();
+        animCtx.shadowBlur = 0;
+    });
+    
+    // Название созвездия (появляется в конце)
+    if (animProgress > 1.5) {
+        animCtx.fillStyle = animConstellation.color;
+        animCtx.font = 'bold 20px Arial';
+        animCtx.textAlign = 'center';
+        animCtx.shadowBlur = 20;
+        animCtx.shadowColor = animConstellation.color;
+        animCtx.fillText(animConstellation.name.replace(/<[^>]*>/g, ''), animCanvas.width / 2, animCanvas.height - 30);
+        animCtx.shadowBlur = 0;
+    }
+    
+    // Продолжаем анимацию
+    if (animProgress < 3) {
+        animFrame = requestAnimationFrame(animateConstellation);
+    }
+}
+
+function drawBackgroundStars() {
+    // Рисуем случайные фоновые звезды
+    animCtx.fillStyle = '#ffffff';
+    for (let i = 0; i < 50; i++) {
+        const x = (Math.sin(i * 0.3 + animProgress) * 0.5 + 0.5) * animCanvas.width;
+        const y = (Math.cos(i * 0.5 + animProgress * 0.5) * 0.5 + 0.5) * animCanvas.height;
+        const size = Math.random() * 1.5;
+        const alpha = 0.3 + Math.sin(animProgress * 2 + i) * 0.2;
+        
+        animCtx.globalAlpha = alpha;
+        animCtx.beginPath();
+        animCtx.arc(x, y, size, 0, Math.PI * 2);
+        animCtx.fill();
+    }
+    animCtx.globalAlpha = 1;
+}
+
+function stopAnimation() {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    document.getElementById('animation-overlay').classList.remove('active');
+}
+
+// ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОВТОРА
+function restartAnimation() {
+    // Отменяем текущую анимацию, но НЕ скрываем оверлей
+    if (animFrame) cancelAnimationFrame(animFrame);
+    
+    // Сбрасываем прогресс
+    animProgress = 0;
+    
+    // Сбрасываем пульсацию звёзд
+    animStars.forEach(star => { star.pulse = 0; });
+    
+    // Запускаем анимацию заново (оверлей остаётся видимым)
+    animateConstellation();
+}
+
+// Обработчик изменения размера для анимации
+window.addEventListener('resize', () => {
+    if (document.getElementById('animation-overlay').classList.contains('active')) {
+        resizeAnimationCanvas();
+    }
+});
+
+// === ЗАГРУЗКА ===
+window.addEventListener('load', () => {
+    const savedLang = localStorage.getItem('appLang');
+    if (savedLang && LANGUAGES[savedLang]) state.lang = savedLang;
+    const savedCity = localStorage.getItem('selectedCity');
+    if (savedCity) { try { state.selectedCity = JSON.parse(savedCity); } catch(e) {} }
+    const loadingScreen = document.getElementById('loadingScreen');
+    const loadingVideo = document.getElementById('loadingVideo');
+    const appContent = document.getElementById('appContent');
+    const soundBtn = document.getElementById('soundBtn');
+    let actionTaken = false;
+    function startVideo(useSound) { if (actionTaken) return; actionTaken = true; if (soundBtn) soundBtn.style.display = 'none'; if (loadingVideo) { loadingVideo.muted = !useSound; loadingVideo.play().catch(()=>{}); } setTimeout(() => { if (loadingScreen) loadingScreen.classList.add('hidden'); setTimeout(() => { if (loadingScreen) loadingScreen.style.display = 'none'; if (appContent) appContent.style.display = 'flex'; if (loadingVideo) loadingVideo.pause(); startSensors(); showScreen('main'); const btnReal = document.getElementById('btn-real'); const btnSum = document.getElementById('btn-sum'); if (btnReal) btnReal.classList.add('active'); if (btnSum) btnSum.classList.add('active'); applyLang(); updateStatus(); if (state.selectedCity) { const cityDesc = document.getElementById('currentCityDesc'); if (cityDesc) cityDesc.textContent = getCityName(state.selectedCity); } }, 500); }, 3000); }
+    if (soundBtn) soundBtn.addEventListener('click', (e) => { e.stopPropagation(); startVideo(true); });
+    setTimeout(() => { if (!actionTaken) startVideo(false); }, 2000);
+    if (loadingVideo) loadingVideo.load();
+});
+</script>
+</body>
+</html>
