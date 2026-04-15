@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
-    <title>Анти ИИ Космос</title>
+    
+    <!-- === SEO МЕТА-ТЕГИ === -->
+    <title>Анти ИИ Космос — Офлайн навигатор по созвездиям</title>
+    <meta name="description" content="Анти ИИ Космос — офлайн-навигатор по звёздному небу. Определяет созвездие над любым городом России. Без интернета, без ИИ, только математика.">
+    <meta name="keywords" content="анти ии, космос, созвездия, звёздное небо, навигатор, офлайн, россия, астрономия, без интернета">
+    <meta name="author" content="Anti AI Cosmos Project">
+    <meta name="robots" content="index, follow">
+    
+    <!-- === Open Graph (для соцсетей: Telegram, WhatsApp, VK) === -->
+    <meta property="og:title" content="Анти ИИ Космос — Звёздный навигатор">
+    <meta property="og:description" content="Офлайн-навигатор по звёздному небу. Выберите город и узнайте созвездие в зените. 300+ городов России. Без интернета, без ИИ.">
+    <meta property="og:image" content="https://ancf-hue.github.io/anti-ai-cosmos/logo.jpeg">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:url" content="https://ancf-hue.github.io/anti-ai-cosmos/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:site_name" content="Анти ИИ Космос">
+    
+    <!-- === Twitter Card === -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Анти ИИ Космос — Звёздный навигатор">
+    <meta name="twitter:description" content="Офлайн-навигатор по звёздному небу. Определяет созвездие над любым городом России.">
+    <meta name="twitter:image" content="https://ancf-hue.github.io/anti-ai-cosmos/logo.jpeg">
+    
+    <!-- === Иконки === -->
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <link rel="apple-touch-icon" href="logo.jpeg">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -189,17 +215,42 @@
             padding: 8px 12px; font-size: 11px; display: flex; justify-content: space-between;
         }
         .instruction-card, .support-card {
-            background: rgba(30,41,59,0.85); border-radius: 24px;
-            padding: 18px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(30,41,59,0.85);
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .instruction-card h3 { color: #60a5fa; font-size: 15px; margin-bottom: 10px; }
         .instruction-card p { color: #94a3b8; font-size: 13px; line-height: 1.5; }
         .support-phone {
-            font-size: 22px; font-weight: 800; color: #34d399; text-align: center; margin: 12px 0;
+            font-size: 24px;
+            font-weight: 800;
+            color: #34d399;
+            text-align: center;
+            letter-spacing: 1px;
+            margin: 12px 0;
+            font-family: monospace;
         }
         .copy-btn {
-            background: #34d399; border: none; border-radius: 60px;
-            padding: 12px; width: 100%; font-weight: 700; cursor: pointer;
+            background: #34d399;
+            border: none;
+            border-radius: 60px;
+            padding: 14px;
+            width: 100%;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            color: #064e3b;
+        }
+        .copy-btn:active { transform: scale(0.96); }
+        .support-note {
+            font-size: 11px;
+            color: #6b9c7a;
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         .projects-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .project-item {
@@ -452,9 +503,12 @@
             </div>
             <div class="screen-content">
                 <div class="support-card">
-                    <p>🤝 <span data-t="supportFree">Проект бесплатный навсегда</span></p>
-                    <div class="support-phone">8-920-227-56-76</div>
-                    <button class="copy-btn" onclick="copyPhoneNumber()">📋 <span data-t="copy">Скопировать номер</span></button>
+                    <p style="font-size:14px; font-weight:700; margin-bottom:8px;">🤝 Приложение бесплатное. Было и останется.</p>
+                    <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">Если проект помог вам или вашим близким — можете поддержать разработку добровольным переводом.</p>
+                    <div class="support-phone">📱 8-920-227-56-76</div>
+                    <button class="copy-btn" onclick="copyPhoneNumber()">📋 Копировать номер</button>
+                    <p style="font-size:11px; color:#6b9c7a; margin-top:12px;">✅ Деньги придут мгновенно. Без комиссии. Безопасно.</p>
+                    <div class="support-note">❤️ Спасибо за поддержку!</div>
                 </div>
                 <div class="instruction-card">
                     <h3 data-t="ourProjects">🚀 Наши проекты</h3>
@@ -1049,7 +1103,7 @@ function openLangModal() {
 }
 
 function closeLangModal() { document.getElementById('langModal').classList.remove('open'); }
-function copyPhoneNumber() { navigator.clipboard.writeText("8-920-227-56-76"); alert("📋 " + t('copy')); }
+function copyPhoneNumber() { navigator.clipboard.writeText("8-920-227-56-76"); alert("📋 Номер скопирован! Спасибо за поддержку ❤️"); }
 
 // === КАМЕРА И ОТРИСОВКА ===
 async function startCamera() { const video = document.getElementById('video'); try { if (currentStream) currentStream.getTracks().forEach(t => t.stop()); const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); currentStream = stream; video.srcObject = stream; video.style.display = 'block'; startDrawing(); } catch (err) { if (video) video.style.display = 'none'; startDrawing(); } }
@@ -1067,7 +1121,7 @@ let animStars = [];
 let animLines = [];
 let animConstellation = null;
 
-// === РАСШИРЕННАЯ БАЗА СОЗВЕЗДИЙ С НАСТОЯЩИМИ НАЗВАНИЯМИ ЗВЁЗД ===
+// === РАСШИРЕННАЯ БАЗА СОЗВЕЗДИЙ ===
 const ANIMATION_CONSTELLATIONS = {
     'БОЛЬШАЯ МЕДВЕДИЦА': {
         color: '#FF3366',
@@ -1137,15 +1191,6 @@ const ANIMATION_CONSTELLATIONS = {
         ],
         lines: [[0,1],[0,2],[1,3],[2,3]]
     },
-    'ОРЕЛ': {
-        color: '#33FFFF',
-        stars: [
-            { name: 'Альтаир', x: 0.65, y: 0.55, mag: 0.8 },
-            { name: 'Таразед', x: 0.63, y: 0.58, mag: 2.7 },
-            { name: 'Альшаин', x: 0.67, y: 0.53, mag: 3.7 }
-        ],
-        lines: [[0,1],[0,2]]
-    },
     'ПЕГАС': {
         color: '#FF6699',
         stars: [
@@ -1161,113 +1206,162 @@ const ANIMATION_CONSTELLATIONS = {
         stars: [
             { name: 'Альферац', x: 0.25, y: 0.1, mag: 2.1 },
             { name: 'Мирах', x: 0.2, y: 0.15, mag: 2.1 },
-            { name: 'Альмак', x: 0.15, y: 0.2, mag: 2.1 },
-            { name: 'Дельта Андр', x: 0.22, y: 0.18, mag: 3.3 }
+            { name: 'Альмак', x: 0.15, y: 0.2, mag: 2.1 }
         ],
-        lines: [[0,1],[1,2],[1,3]]
+        lines: [[0,1],[1,2]]
     },
-    'ПЕРСЕЙ': {
-        color: '#FF9966',
+    'ГЕРКУЛЕС': {
+        color: '#FF9933',
         stars: [
-            { name: 'Мирфак', x: 0.15, y: 0.4, mag: 1.8 },
-            { name: 'Алголь', x: 0.1, y: 0.45, mag: 2.1 },
-            { name: 'Менкиб', x: 0.18, y: 0.42, mag: 2.9 }
+            { name: 'Рас Альгети', x: 0.6, y: 0.5, mag: 3.1 },
+            { name: 'Корнефорос', x: 0.55, y: 0.6, mag: 2.8 }
         ],
-        lines: [[0,1],[0,2]]
+        lines: [[0,1]]
+    },
+    'ДРАКОН': {
+        color: '#33CC66',
+        stars: [
+            { name: 'Тубан', x: 0.6, y: 0.05, mag: 3.7 },
+            { name: 'Этамин', x: 0.7, y: 0.1, mag: 2.2 }
+        ],
+        lines: [[0,1]]
+    },
+    'ЦЕФЕЙ': {
+        color: '#66CCFF',
+        stars: [
+            { name: 'Альдерамин', x: 0.45, y: 0.05, mag: 2.4 },
+            { name: 'Алаирак', x: 0.55, y: 0.08, mag: 3.2 }
+        ],
+        lines: [[0,1]]
+    },
+    'МАЛАЯ МЕДВЕДИЦА': {
+        color: '#FF6699',
+        stars: [
+            { name: 'Полярная', x: 0.5, y: 0.1, mag: 2.0 },
+            { name: 'Кохаб', x: 0.35, y: 0.2, mag: 2.1 }
+        ],
+        lines: [[0,1]]
     },
     'ТЕЛЕЦ': {
         color: '#FF6633',
         stars: [
             { name: 'Альдебаран', x: 0.25, y: 0.5, mag: 0.9 },
-            { name: 'Эль-Нат', x: 0.22, y: 0.48, mag: 1.7 },
-            { name: 'Альциона', x: 0.2, y: 0.45, mag: 2.9 },
-            { name: 'Атлас', x: 0.18, y: 0.47, mag: 3.6 }
+            { name: 'Эль-Нат', x: 0.22, y: 0.48, mag: 1.7 }
         ],
-        lines: [[0,1],[0,2],[2,3]]
+        lines: [[0,1]]
     },
     'БЛИЗНЕЦЫ': {
         color: '#66FF99',
         stars: [
             { name: 'Кастор', x: 0.6, y: 0.45, mag: 1.6 },
-            { name: 'Поллукс', x: 0.7, y: 0.5, mag: 1.1 },
-            { name: 'Альхена', x: 0.65, y: 0.55, mag: 1.9 },
-            { name: 'Мекбуда', x: 0.62, y: 0.48, mag: 2.9 }
+            { name: 'Поллукс', x: 0.7, y: 0.5, mag: 1.1 }
         ],
-        lines: [[0,1],[0,2],[1,2],[2,3]]
-    },
-    'РАК': {
-        color: '#99FF66',
-        stars: [
-            { name: 'Акубенс', x: 0.55, y: 0.6, mag: 4.3 },
-            { name: 'Альтарф', x: 0.6, y: 0.55, mag: 3.5 },
-            { name: 'Азеллус Бореалис', x: 0.57, y: 0.58, mag: 4.7 }
-        ],
-        lines: [[0,1],[1,2]]
+        lines: [[0,1]]
     },
     'ЛЕВ': {
         color: '#FFCC66',
         stars: [
             { name: 'Регул', x: 0.75, y: 0.75, mag: 1.4 },
-            { name: 'Денебола', x: 0.9, y: 0.7, mag: 2.1 },
-            { name: 'Альгиеба', x: 0.8, y: 0.65, mag: 2.0 },
-            { name: 'Зосма', x: 0.85, y: 0.72, mag: 2.6 }
+            { name: 'Денебола', x: 0.9, y: 0.7, mag: 2.1 }
         ],
-        lines: [[0,1],[0,2],[2,3],[3,1]]
+        lines: [[0,1]]
     },
     'ДЕВА': {
         color: '#66CCFF',
         stars: [
             { name: 'Спика', x: 0.85, y: 0.9, mag: 1.0 },
-            { name: 'Виндемиатрикс', x: 0.75, y: 0.85, mag: 2.8 },
-            { name: 'Поррима', x: 0.8, y: 0.88, mag: 2.7 }
+            { name: 'Виндемиатрикс', x: 0.75, y: 0.85, mag: 2.8 }
         ],
-        lines: [[0,1],[1,2],[2,0]]
+        lines: [[0,1]]
     },
     'ВЕСЫ': {
         color: '#CC99FF',
         stars: [
             { name: 'Зубен эль Шамали', x: 0.5, y: 0.85, mag: 2.6 },
-            { name: 'Зубен эль Генуби', x: 0.55, y: 0.9, mag: 2.8 },
-            { name: 'Брахиум', x: 0.52, y: 0.87, mag: 3.7 }
+            { name: 'Зубен эль Генуби', x: 0.55, y: 0.9, mag: 2.8 }
         ],
-        lines: [[0,1],[1,2]]
+        lines: [[0,1]]
     },
     'СКОРПИОН': {
         color: '#FF3399',
         stars: [
             { name: 'Антарес', x: 0.45, y: 0.95, mag: 1.1 },
-            { name: 'Шаула', x: 0.35, y: 0.85, mag: 1.6 },
-            { name: 'Саргас', x: 0.4, y: 0.9, mag: 1.9 },
-            { name: 'Дшубба', x: 0.42, y: 0.92, mag: 2.3 }
+            { name: 'Шаула', x: 0.35, y: 0.85, mag: 1.6 }
         ],
-        lines: [[0,1],[1,2],[2,3],[3,0]]
+        lines: [[0,1]]
     },
     'СТРЕЛЕЦ': {
         color: '#33FFCC',
         stars: [
             { name: 'Каус Аустралис', x: 0.4, y: 1.0, mag: 1.8 },
-            { name: 'Нунки', x: 0.45, y: 0.95, mag: 2.1 },
-            { name: 'Асцелла', x: 0.42, y: 0.98, mag: 2.7 }
+            { name: 'Нунки', x: 0.45, y: 0.95, mag: 2.1 }
         ],
-        lines: [[0,1],[1,2],[2,0]]
+        lines: [[0,1]]
     },
     'КОЗЕРОГ': {
         color: '#99CCFF',
         stars: [
             { name: 'Дабих', x: 0.3, y: 0.95, mag: 3.0 },
-            { name: 'Альгеди', x: 0.25, y: 0.9, mag: 3.6 },
-            { name: 'Денеб Альгеди', x: 0.28, y: 0.92, mag: 2.9 }
+            { name: 'Альгеди', x: 0.25, y: 0.9, mag: 3.6 }
         ],
-        lines: [[0,1],[1,2],[2,0]]
+        lines: [[0,1]]
     },
     'ВОДОЛЕЙ': {
         color: '#66FFCC',
         stars: [
             { name: 'Садалмелик', x: 0.35, y: 0.8, mag: 2.9 },
-            { name: 'Садальсууд', x: 0.3, y: 0.75, mag: 2.9 },
-            { name: 'Скат', x: 0.32, y: 0.78, mag: 3.3 }
+            { name: 'Садальсууд', x: 0.3, y: 0.75, mag: 2.9 }
         ],
-        lines: [[0,1],[1,2],[2,0]]
+        lines: [[0,1]]
+    },
+    'РЫБЫ': {
+        color: '#66CC99',
+        stars: [
+            { name: 'Альриша', x: 0.25, y: 0.1, mag: 3.8 }
+        ],
+        lines: []
+    },
+    'БОЛЬШОЙ ПЁС': {
+        color: '#FFCC99',
+        stars: [
+            { name: 'Сириус', x: 0.25, y: 0.85, mag: -1.5 }
+        ],
+        lines: []
+    },
+    'МАЛЫЙ ПЁС': {
+        color: '#99CC66',
+        stars: [
+            { name: 'Процион', x: 0.6, y: 0.6, mag: 0.4 }
+        ],
+        lines: []
+    },
+    'КИТ': {
+        color: '#66CC99',
+        stars: [
+            { name: 'Менкар', x: 0.2, y: 0.1, mag: 2.5 }
+        ],
+        lines: []
+    },
+    'ЭРИДАН': {
+        color: '#3399FF',
+        stars: [
+            { name: 'Ахернар', x: 0.1, y: 0.95, mag: 0.5 }
+        ],
+        lines: []
+    },
+    'ЮЖНЫЙ КРЕСТ': {
+        color: '#FF3366',
+        stars: [
+            { name: 'Акрукс', x: 0.35, y: 0.85, mag: 0.8 }
+        ],
+        lines: []
+    },
+    'ЦЕНТАВР': {
+        color: '#FFCC33',
+        stars: [
+            { name: 'Ригиль Кентаурус', x: 0.3, y: 0.8, mag: -0.3 }
+        ],
+        lines: []
     }
 };
 
@@ -1279,69 +1373,37 @@ function startConstellationAnimation() {
     animCanvas = canvas;
     animCtx = canvas.getContext('2d');
     
-    // Настройка заголовка
     const cityName = getCityName(state.selectedCity);
     document.getElementById('anim-city-name').textContent = `${cityName} • ${state.selectedCity.lat.toFixed(2)}° • ${state.selectedCity.lon.toFixed(2)}°`;
     
-    // Получаем название созвездия
     const constellationName = getCurrentConstellation(state.selectedCity.lat, state.selectedCity.lon);
     document.getElementById('anim-constellation-name').textContent = constellationName;
     
-    // Инициализация анимации
     setupAnimation(constellationName);
     
-    // Показать оверлей
     overlay.classList.add('active');
     resizeAnimationCanvas();
     
-    // Запустить анимацию
     animProgress = 0;
     animateConstellation();
 }
 
 function setupAnimation(constellationName) {
-    // Получаем данные созвездия или генерируем случайные
-    const data = ANIMATION_CONSTELLATIONS[constellationName] || generateRandomConstellation(constellationName);
+    const data = ANIMATION_CONSTELLATIONS[constellationName] || ANIMATION_CONSTELLATIONS['БОЛЬШАЯ МЕДВЕДИЦА'];
     animConstellation = data;
     
-    // Подготовка звезд
     animStars = data.stars.map(star => ({
         ...star,
         drawn: false,
         pulse: 0
     }));
     
-    // Подготовка линий
     animLines = data.lines.map((line, index) => ({
         start: line[0],
         end: line[1],
         progress: 0,
-        delay: index * 0.1 // Задержка между линиями
+        delay: index * 0.1
     }));
-}
-
-function generateRandomConstellation(name) {
-    // Генерация случайного созвездия для демонстрации
-    const color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-    const starCount = 5 + Math.floor(Math.random() * 4);
-    const stars = [];
-    const lines = [];
-    
-    for (let i = 0; i < starCount; i++) {
-        stars.push({
-            name: `Звезда ${i+1}`,
-            x: 0.3 + Math.random() * 0.4,
-            y: 0.3 + Math.random() * 0.4,
-            mag: 1 + Math.random() * 3
-        });
-    }
-    
-    // Соединяем звезды последовательно
-    for (let i = 0; i < starCount - 1; i++) {
-        lines.push([i, i+1]);
-    }
-    
-    return { color, stars, lines };
 }
 
 function resizeAnimationCanvas() {
@@ -1354,23 +1416,18 @@ function resizeAnimationCanvas() {
 function animateConstellation() {
     if (!animCtx || !animCanvas) return;
     
-    // Очистка
     animCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     animCtx.fillRect(0, 0, animCanvas.width, animCanvas.height);
     
-    // Обновление прогресса
     animProgress += 0.01;
     
-    // Рисуем фоновые звезды
     drawBackgroundStars();
     
-    // Рисуем звезды созвездия
     animStars.forEach((star, index) => {
         const x = star.x * animCanvas.width;
         const y = star.y * animCanvas.height;
         const size = Math.max(2, 4 - star.mag);
         
-        // Анимация появления звезд
         if (animProgress > index * 0.15) {
             star.pulse = Math.sin(animProgress * 10 + index) * 0.3 + 0.7;
             
@@ -1382,7 +1439,6 @@ function animateConstellation() {
             animCtx.fill();
             animCtx.shadowBlur = 0;
             
-            // Название звезды (появляется позже)
             if (animProgress > 0.8 + index * 0.05) {
                 animCtx.fillStyle = animConstellation.color;
                 animCtx.font = '12px Arial';
@@ -1391,7 +1447,6 @@ function animateConstellation() {
         }
     });
     
-    // Рисуем линии
     animLines.forEach(line => {
         const delayProgress = Math.max(0, (animProgress - line.delay) * 2);
         if (delayProgress <= 0) return;
@@ -1405,7 +1460,6 @@ function animateConstellation() {
         const x2 = star2.x * animCanvas.width;
         const y2 = star2.y * animCanvas.height;
         
-        // Анимация рисования линии
         const curX = x1 + (x2 - x1) * Math.min(1, delayProgress);
         const curY = y1 + (y2 - y1) * Math.min(1, delayProgress);
         
@@ -1422,7 +1476,6 @@ function animateConstellation() {
         animCtx.shadowBlur = 0;
     });
     
-    // Название созвездия (появляется в конце)
     if (animProgress > 1.5) {
         animCtx.fillStyle = animConstellation.color;
         animCtx.font = 'bold 20px Arial';
@@ -1433,14 +1486,12 @@ function animateConstellation() {
         animCtx.shadowBlur = 0;
     }
     
-    // Продолжаем анимацию
     if (animProgress < 3) {
         animFrame = requestAnimationFrame(animateConstellation);
     }
 }
 
 function drawBackgroundStars() {
-    // Рисуем случайные фоновые звезды
     animCtx.fillStyle = '#ffffff';
     for (let i = 0; i < 50; i++) {
         const x = (Math.sin(i * 0.3 + animProgress) * 0.5 + 0.5) * animCanvas.width;
@@ -1461,22 +1512,13 @@ function stopAnimation() {
     document.getElementById('animation-overlay').classList.remove('active');
 }
 
-// ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ ПОВТОРА
 function restartAnimation() {
-    // Отменяем текущую анимацию, но НЕ скрываем оверлей
     if (animFrame) cancelAnimationFrame(animFrame);
-    
-    // Сбрасываем прогресс
     animProgress = 0;
-    
-    // Сбрасываем пульсацию звёзд
     animStars.forEach(star => { star.pulse = 0; });
-    
-    // Запускаем анимацию заново (оверлей остаётся видимым)
     animateConstellation();
 }
 
-// Обработчик изменения размера для анимации
 window.addEventListener('resize', () => {
     if (document.getElementById('animation-overlay').classList.contains('active')) {
         resizeAnimationCanvas();
