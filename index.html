@@ -4,18 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0f172a">
-    
-    <!-- === Яндекс верификация === -->
     <meta name="yandex-verification" content="57d3f72dce8336e2" />
-    
-    <!-- === SEO МЕТА-ТЕГИ === -->
     <title>Анти ИИ Космос — Офлайн навигатор по созвездиям</title>
     <meta name="description" content="Анти ИИ Космос — офлайн-навигатор по звёздному небу. Определяет созвездие над любым городом России. Без интернета, без ИИ, только математика.">
     <meta name="keywords" content="анти ии, космос, созвездия, звёздное небо, навигатор, офлайн, россия, астрономия, без интернета">
     <meta name="author" content="Anti AI Cosmos Project">
     <meta name="robots" content="index, follow">
-    
-    <!-- === Open Graph === -->
     <meta property="og:title" content="Анти ИИ Космос — Звёздный навигатор">
     <meta property="og:description" content="Офлайн-навигатор по звёздному небу. Выберите город и узнайте созвездие в зените. 300+ городов России. Без интернета, без ИИ.">
     <meta property="og:image" content="https://ancf-hue.github.io/anti-ai-cosmos/logo.jpeg">
@@ -25,122 +19,56 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ru_RU">
     <meta property="og:site_name" content="Анти ИИ Космос">
-    
-    <!-- === Twitter Card === -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Анти ИИ Космос — Звёздный навигатор">
     <meta name="twitter:description" content="Офлайн-навигатор по звёздному небу. Определяет созвездие над любым городом России.">
     <meta name="twitter:image" content="https://ancf-hue.github.io/anti-ai-cosmos/logo.jpeg">
-    
-    <!-- === Иконки === -->
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <link rel="apple-touch-icon" href="logo.jpeg">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #000;
-            color: #f1f5f9;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            position: fixed;
-            top: 0; left: 0;
-        }
-        .app {
-            width: 100%;
-            max-width: 450px;
-            height: 100%;
-            margin: 0 auto;
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .loading-screen {
-            position: absolute; inset: 0; background: #0f172a;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1000; transition: opacity 0.5s;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #000; color: #f1f5f9; height: 100vh; width: 100vw; overflow: hidden; position: fixed; top: 0; left: 0; }
+        .app { width: 100%; max-width: 450px; height: 100%; margin: 0 auto; background: linear-gradient(180deg, #0f172a 0%, #020617 100%); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .loading-screen { position: absolute; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 1000; transition: opacity 0.5s; }
         .loading-screen.hidden { opacity: 0; pointer-events: none; }
         .loading-video { width: 100%; height: 100%; object-fit: cover; }
-        .sound-toggle {
-            position: absolute; top: 20px; left: 20px;
-            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 50%; width: 56px; height: 56px;
-            font-size: 28px; cursor: pointer; z-index: 1001;
-            display: flex; align-items: center; justify-content: center; color: white;
-        }
-        .menu-screen {
-            display: flex; flex-direction: column; height: 100%;
-            padding: 20px 16px; overflow-y: auto;
-        }
+        .sound-toggle { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; width: 56px; height: 56px; font-size: 28px; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center; color: white; }
+        .menu-screen { display: flex; flex-direction: column; height: 100%; padding: 20px 16px; overflow-y: auto; }
         .menu-screen.hidden { display: none; }
         .app-header { text-align: center; padding: 10px 0 20px; }
-        .app-header h1 {
-            font-size: 24px; font-weight: 800;
-            background: linear-gradient(90deg, #60a5fa, #34d399);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .app-header h1 { font-size: 24px; font-weight: 800; background: linear-gradient(90deg, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .app-header img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
         .app-header p { color: #94a3b8; font-size: 12px; margin-top: 8px; }
         .menu-grid { display: flex; flex-direction: column; gap: 14px; flex: 1; }
-        .menu-btn {
-            background: linear-gradient(145deg, rgba(30,41,59,0.95), rgba(15,23,42,0.9));
-            backdrop-filter: blur(10px); border: 2px solid rgba(96,165,250,0.3);
-            border-radius: 24px; padding: 18px 20px;
-            display: flex; align-items: center; gap: 16px; cursor: pointer;
-            transition: all 0.2s; box-shadow: 0 6px 0 rgba(0,0,0,0.3);
-        }
+        .menu-btn { background: linear-gradient(145deg, rgba(30,41,59,0.95), rgba(15,23,42,0.9)); backdrop-filter: blur(10px); border: 2px solid rgba(96,165,250,0.3); border-radius: 24px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 0 rgba(0,0,0,0.3); }
         .menu-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
-        .menu-btn .icon {
-            font-size: 36px; width: 56px; height: 56px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 20px; background: rgba(96,165,250,0.2);
-        }
+        .menu-btn .icon { font-size: 36px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 20px; background: rgba(96,165,250,0.2); }
         .menu-btn .label { font-weight: 700; font-size: 18px; color: white; }
         .menu-btn .desc { font-size: 12px; color: #94a3b8; margin-top: 4px; }
-        .menu-btn.emergency {
-            background: linear-gradient(145deg, rgba(96,165,250,0.4), rgba(59,130,246,0.3));
-            border-color: rgba(96,165,250,0.5);
-        }
+        .menu-btn.emergency { background: linear-gradient(145deg, rgba(96,165,250,0.4), rgba(59,130,246,0.3)); border-color: rgba(96,165,250,0.5); }
         .section-screen { display: none; flex-direction: column; height: 100%; }
         .section-screen.active { display: flex; }
-        .screen-header {
-            padding: 16px; display: flex; align-items: center; gap: 12px;
-            background: rgba(15,23,42,0.95); border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        .screen-header { padding: 16px; display: flex; align-items: center; gap: 12px; background: rgba(15,23,42,0.95); border-bottom: 1px solid rgba(255,255,255,0.1); }
         .screen-header img { width: 36px; height: 36px; border-radius: 10px; }
-        .screen-back {
-            width: 40px; height: 40px; background: rgba(30,41,59,0.85);
-            border: none; border-radius: 12px; color: white; font-size: 20px; cursor: pointer;
-        }
+        .screen-back { width: 40px; height: 40px; background: rgba(30,41,59,0.85); border: none; border-radius: 12px; color: white; font-size: 20px; cursor: pointer; }
         .screen-title { font-size: 18px; font-weight: 700; flex: 1; }
         
-        /* === УНИВЕРСАЛЬНОЕ СКРЫТИЕ БЕГУНКОВ === */
-        .screen-content, .city-list-container, .modal-list, .projects-list, #skyScreen {
-            -ms-overflow-style: none;  /* IE/Edge */
+        /* === СКРЫТИЕ БЕГУНКОВ (СКРОЛЛБАРОВ) НА ВСЕХ ЭКРАНАХ === */
+        .screen-content, .city-list-container, .modal-list, .projects-list, #skyScreen, .menu-screen {
+            -ms-overflow-style: none;  /* IE и Edge */
             scrollbar-width: none;     /* Firefox */
         }
         .screen-content::-webkit-scrollbar, 
         .city-list-container::-webkit-scrollbar, 
         .modal-list::-webkit-scrollbar, 
         .projects-list::-webkit-scrollbar, 
-        #skyScreen::-webkit-scrollbar {
-            display: none;  /* Chrome/Safari/Opera */
+        #skyScreen::-webkit-scrollbar,
+        .menu-screen::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari, Opera */
         }
         
-        .city-panel {
-            background: rgba(30,41,59,0.85);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            text-align: center;
-            border: 1px solid #3b82f6;
-        }
+        .city-panel { background: rgba(30,41,59,0.85); border-radius: 24px; padding: 20px; margin-bottom: 16px; text-align: center; border: 1px solid #3b82f6; }
         .city-name { font-size: 24px; font-weight: 800; color: #60a5fa; margin-bottom: 8px; }
         .city-coords { font-size: 13px; color: #94a3b8; font-family: monospace; margin-bottom: 16px; }
         .city-constellation { font-size: 18px; color: #34d399; margin: 12px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 16px; }
@@ -191,8 +119,6 @@
         .modal-close { padding: 16px; text-align: center; background: rgba(0,0,0,0.3); cursor: pointer; color: #94a3b8; font-weight: 600; }
         .modal-close:active { background: rgba(0,0,0,0.5); }
         .hidden { display: none; }
-        
-        /* === АНИМАЦИЯ СОЗВЕЗДИЙ === */
         #animation-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         #animation-overlay.active { display: flex; }
         #animation-canvas { flex: 1; width: 100%; height: 100%; }
@@ -208,51 +134,27 @@
 </head>
 <body>
 <div class="app">
-    <!-- ЗАГРУЗКА -->
     <div class="loading-screen" id="loadingScreen">
         <button class="sound-toggle" id="soundBtn">🔇</button>
         <video src="cube.mp4" muted playsinline preload="auto" class="loading-video" id="loadingVideo"></video>
     </div>
 
     <div id="appContent" style="display: none; height: 100%; display: flex; flex-direction: column;">
-        <!-- ГЛАВНОЕ МЕНЮ -->
         <div class="menu-screen" id="menuScreen">
             <div class="app-header">
-                <h1>
-                    <img src="logo.jpeg" alt="Logo" onerror="this.style.display='none'">
-                    <span id="t-title">Анти ИИ Космос</span>
-                </h1>
+                <h1><img src="logo.jpeg" alt="Logo" onerror="this.style.display='none'"><span id="t-title">Анти ИИ Космос</span></h1>
                 <p id="t-subtitle">Определение созвездий с учётом времени и сезона</p>
             </div>
             <div class="menu-grid">
-                <div class="menu-btn emergency" onclick="showSky('photo')">
-                    <div class="icon">📷</div>
-                    <div><div class="label" data-t="photo">Сделать фото</div><div class="desc" data-t="photoDesc">Сохранить небо</div></div>
-                </div>
-                <div class="menu-btn" onclick="showSky('video')">
-                    <div class="icon">🎥</div>
-                    <div><div class="label" data-t="video">Видео</div><div class="desc" data-t="videoDesc">Запись неба</div></div>
-                </div>
-                <div class="menu-btn" onclick="showCityScreen()">
-                    <div class="icon">🏙️</div>
-                    <div><div class="label" data-t="myCity">Мой город</div><div class="desc" id="currentCityDesc">Выберите город</div></div>
-                </div>
-                <div class="menu-btn" onclick="openLangModal()">
-                    <div class="icon">🗣️</div>
-                    <div><div class="label" data-t="language">Язык</div><div class="desc" id="currentLang">Русский</div></div>
-                </div>
-                <div class="menu-btn" onclick="showScreen('instruction')">
-                    <div class="icon">📖</div>
-                    <div><div class="label" data-t="howto">Как пользоваться</div><div class="desc" data-t="howtoDesc">Инструкция</div></div>
-                </div>
-                <div class="menu-btn" onclick="showScreen('support')">
-                    <div class="icon">💝</div>
-                    <div><div class="label" data-t="support">Поддержать проект</div><div class="desc" data-t="supportDesc">Помочь развитию</div></div>
-                </div>
+                <div class="menu-btn emergency" onclick="showSky('photo')"><div class="icon">📷</div><div><div class="label" data-t="photo">Сделать фото</div><div class="desc" data-t="photoDesc">Сохранить небо</div></div></div>
+                <div class="menu-btn" onclick="showSky('video')"><div class="icon">🎥</div><div><div class="label" data-t="video">Видео</div><div class="desc" data-t="videoDesc">Запись неба</div></div></div>
+                <div class="menu-btn" onclick="showCityScreen()"><div class="icon">🏙️</div><div><div class="label" data-t="myCity">Мой город</div><div class="desc" id="currentCityDesc">Выберите город</div></div></div>
+                <div class="menu-btn" onclick="openLangModal()"><div class="icon">🗣️</div><div><div class="label" data-t="language">Язык</div><div class="desc" id="currentLang">Русский</div></div></div>
+                <div class="menu-btn" onclick="showScreen('instruction')"><div class="icon">📖</div><div><div class="label" data-t="howto">Как пользоваться</div><div class="desc" data-t="howtoDesc">Инструкция</div></div></div>
+                <div class="menu-btn" onclick="showScreen('support')"><div class="icon">💝</div><div><div class="label" data-t="support">Поддержать проект</div><div class="desc" data-t="supportDesc">Помочь развитию</div></div></div>
             </div>
         </div>
 
-        <!-- ЭКРАН МОЙ ГОРОД -->
         <div class="section-screen" id="cityScreen">
             <div class="screen-header">
                 <button class="screen-back" onclick="backToMenu()">←</button>
@@ -260,24 +162,19 @@
                 <div class="screen-title" data-t="myCity">🏙️ Мой город</div>
             </div>
             <div class="screen-content">
-                <div class="city-list-container" id="citiesContainer">
-                    <div id="citiesList"></div>
-                </div>
+                <div class="city-list-container" id="citiesContainer"><div id="citiesList"></div></div>
                 <div id="cityInfo" class="city-panel hidden">
                     <div class="city-name" id="selectedCityName">—</div>
                     <div class="city-coords" id="selectedCityCoords">—</div>
                     <div class="city-constellation" id="selectedCityConstellation">🌌 Определение...</div>
                     <div class="city-time" id="selectedCityTime">--:--:--</div>
                     <div class="city-date" id="selectedCityDate">—</div>
-                    <button class="sky-btn" onclick="startConstellationAnimation()" style="margin-top:15px;background:linear-gradient(45deg,#00ff99,#00ccff);color:#000;font-weight:700;">
-                        🎬 Показать анимацию созвездия
-                    </button>
+                    <button class="sky-btn" onclick="startConstellationAnimation()" style="margin-top:15px;background:linear-gradient(45deg,#00ff99,#00ccff);color:#000;font-weight:700;">🎬 Показать анимацию созвездия</button>
                 </div>
                 <button class="back-btn" onclick="backToMenuFromCity()">← <span data-t="back">Назад</span></button>
             </div>
         </div>
 
-        <!-- ЭКРАН НЕБА -->
         <div class="section-screen" id="skyScreen">
             <div class="screen-header">
                 <button class="screen-back" onclick="backToMenu()">←</button>
@@ -303,21 +200,13 @@
                     </div>
                     <button class="sky-btn" onclick="takePhoto()" id="skyActionBtn" data-t="photo">📷 Сделать фото</button>
                     <button class="sky-btn secondary" onclick="backToMenu()">↩ <span data-t="back">Назад</span></button>
-                    <div class="status">
-                        <span><span data-t="mode">Режим</span>: <span id="statusModeText">Сейчас • Лето</span></span>
-                        <span id="statusTime">--:--</span>
-                    </div>
+                    <div class="status"><span><span data-t="mode">Режим</span>: <span id="statusModeText">Сейчас • Лето</span></span><span id="statusTime">--:--</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- ИНСТРУКЦИЯ -->
         <div class="section-screen" id="instructionScreen">
-            <div class="screen-header">
-                <button class="screen-back" onclick="showScreen('main')">←</button>
-                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
-                <div class="screen-title" data-t="howto">Как пользоваться</div>
-            </div>
+            <div class="screen-header"><button class="screen-back" onclick="showScreen('main')">←</button><img src="logo.jpeg" alt="logo" onerror="this.style.display='none'"><div class="screen-title" data-t="howto">Как пользоваться</div></div>
             <div class="screen-content">
                 <div class="instruction-card"><h3>🏙️ 1. Выберите город</h3><p>Нажмите «Мой город» → найдите свой город в списке (300+ городов России) → приложение покажет координаты и время.</p></div>
                 <div class="instruction-card"><h3>✨ 2. Узнайте созвездие</h3><p>Приложение автоматически определит, какое созвездие сейчас в зените над вашим городом (учитывая время и сезон).</p></div>
@@ -327,13 +216,8 @@
             </div>
         </div>
 
-        <!-- ПОДДЕРЖКА -->
         <div class="section-screen" id="supportScreen">
-            <div class="screen-header">
-                <button class="screen-back" onclick="showScreen('main')">←</button>
-                <img src="logo.jpeg" alt="logo" onerror="this.style.display='none'">
-                <div class="screen-title" data-t="support">Поддержать проект</div>
-            </div>
+            <div class="screen-header"><button class="screen-back" onclick="showScreen('main')">←</button><img src="logo.jpeg" alt="logo" onerror="this.style.display='none'"><div class="screen-title" data-t="support">Поддержать проект</div></div>
             <div class="screen-content">
                 <div class="support-card">
                     <p style="font-size:14px; font-weight:700; margin-bottom:8px;">🤝 Приложение бесплатное. Было и останется.</p>
@@ -358,7 +242,6 @@
         </div>
     </div>
 
-    <!-- ОВЕРЛЕЙ АНИМАЦИИ СОЗВЕЗДИЙ -->
     <div id="animation-overlay">
         <div class="animation-header">
             <div class="animation-title" id="anim-constellation-name">БОЛЬШАЯ МЕДВЕДИЦА</div>
@@ -372,7 +255,6 @@
     </div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО ЯЗЫКОВ -->
 <div class="modal-overlay" id="langModal">
     <div class="modal-bottom">
         <div class="modal-header" data-t="selectLang">🗣️ Выберите язык</div>
@@ -387,6 +269,7 @@ const LANGUAGES = {
     'ce': { name: '🇨🇪 Чеченский', native: 'Нохчийн' }, 'ba': { name: '🇧🇦 Башкирский', native: 'Башҡорт' },
     'cv': { name: '🇨🇻 Чувашский', native: 'Чӑваш' }
 };
+
 const CITY_NAMES = {
     'Москва': { tt: 'Мәскәү', ce: 'Москва', ba: 'Мәскәү', cv: 'Мускав' }, 'Санкт-Петербург': { tt: 'Санкт-Петербург', ce: 'Санкт-Петербург', ba: 'Санкт-Петербург', cv: 'Санкт-Петербург' },
     'Казань': { tt: 'Казан', ce: 'Казань', ba: 'Ҡазан', cv: 'Хусан' }, 'Уфа': { tt: 'Уфа', ce: 'Уфа', ba: 'Өфө', cv: 'Ӗпхӳ' },
@@ -434,136 +317,71 @@ function getCityName(city) {
 }
 
 const RUSSIA_CITIES = [
-    { name: "Москва", region: "Московская обл.", lat: 55.7558, lon: 37.6173 },
-    { name: "Санкт-Петербург", region: "Ленинградская обл.", lat: 59.9343, lon: 30.3351 },
-    { name: "Воронеж", region: "Воронежская обл.", lat: 51.6605, lon: 39.2003 },
-    { name: "Краснодар", region: "Краснодарский край", lat: 45.0355, lon: 38.9753 },
-    { name: "Сочи", region: "Краснодарский край", lat: 43.5855, lon: 39.7231 },
-    { name: "Ростов-на-Дону", region: "Ростовская обл.", lat: 47.2221, lon: 39.7203 },
-    { name: "Волгоград", region: "Волгоградская обл.", lat: 48.7080, lon: 44.5133 },
-    { name: "Нижний Новгород", region: "Нижегородская обл.", lat: 56.2965, lon: 43.9361 },
-    { name: "Казань", region: "Татарстан", lat: 55.7887, lon: 49.1221 },
-    { name: "Самара", region: "Самарская обл.", lat: 53.1959, lon: 50.1002 },
-    { name: "Уфа", region: "Башкортостан", lat: 54.7349, lon: 55.9579 },
-    { name: "Екатеринбург", region: "Свердловская обл.", lat: 56.8389, lon: 60.6057 },
-    { name: "Челябинск", region: "Челябинская обл.", lat: 55.1644, lon: 61.4368 },
-    { name: "Новосибирск", region: "Новосибирская обл.", lat: 55.0084, lon: 82.9357 },
-    { name: "Омск", region: "Омская обл.", lat: 54.9885, lon: 73.3242 },
-    { name: "Красноярск", region: "Красноярский край", lat: 56.0097, lon: 92.8525 },
-    { name: "Иркутск", region: "Иркутская обл.", lat: 52.2864, lon: 104.2807 },
-    { name: "Владивосток", region: "Приморский край", lat: 43.1151, lon: 131.8856 },
-    { name: "Хабаровск", region: "Хабаровский край", lat: 48.4800, lon: 135.0800 },
-    { name: "Тюмень", region: "Тюменская обл.", lat: 57.1522, lon: 65.5272 },
-    { name: "Кемерово", region: "Кемеровская обл.", lat: 55.3549, lon: 86.0898 },
-    { name: "Томск", region: "Томская обл.", lat: 56.4951, lon: 84.9726 },
-    { name: "Барнаул", region: "Алтайский край", lat: 53.3561, lon: 83.7900 },
-    { name: "Калининград", region: "Калининградская обл.", lat: 54.7167, lon: 20.5000 },
-    { name: "Мурманск", region: "Мурманская обл.", lat: 68.9667, lon: 33.0833 },
-    { name: "Архангельск", region: "Архангельская обл.", lat: 64.5333, lon: 40.5333 },
-    { name: "Смоленск", region: "Смоленская обл.", lat: 54.7833, lon: 32.0500 },
-    { name: "Тверь", region: "Тверская обл.", lat: 56.8584, lon: 35.9006 },
-    { name: "Тула", region: "Тульская обл.", lat: 54.2000, lon: 37.6167 },
-    { name: "Рязань", region: "Рязанская обл.", lat: 54.6167, lon: 39.7167 },
-    { name: "Ярославль", region: "Ярославская обл.", lat: 57.6261, lon: 39.8845 },
-    { name: "Владимир", region: "Владимирская обл.", lat: 56.1284, lon: 40.4081 },
-    { name: "Калуга", region: "Калужская обл.", lat: 54.5333, lon: 36.2667 },
-    { name: "Орёл", region: "Орловская обл.", lat: 52.9667, lon: 36.0833 },
-    { name: "Курск", region: "Курская обл.", lat: 51.7167, lon: 36.1833 },
-    { name: "Белгород", region: "Белгородская обл.", lat: 50.6000, lon: 36.6000 },
-    { name: "Липецк", region: "Липецкая обл.", lat: 52.6167, lon: 39.6000 },
-    { name: "Тамбов", region: "Тамбовская обл.", lat: 52.7167, lon: 41.4333 },
-    { name: "Пенза", region: "Пензенская обл.", lat: 53.2000, lon: 45.0000 },
-    { name: "Саратов", region: "Саратовская обл.", lat: 51.5333, lon: 46.0333 },
-    { name: "Ульяновск", region: "Ульяновская обл.", lat: 54.3167, lon: 48.3667 },
-    { name: "Ижевск", region: "Удмуртия", lat: 56.8500, lon: 53.2167 },
-    { name: "Пермь", region: "Пермский край", lat: 58.0104, lon: 56.2294 },
-    { name: "Киров", region: "Кировская обл.", lat: 58.6000, lon: 49.6500 },
-    { name: "Курган", region: "Курганская обл.", lat: 55.4400, lon: 65.3300 },
-    { name: "Оренбург", region: "Оренбургская обл.", lat: 51.7682, lon: 55.0968 },
-    { name: "Ставрополь", region: "Ставропольский край", lat: 45.0500, lon: 41.9833 },
-    { name: "Пятигорск", region: "Ставропольский край", lat: 44.0333, lon: 43.0500 },
-    { name: "Вологда", region: "Вологодская обл.", lat: 59.2167, lon: 39.9000 },
-    { name: "Череповец", region: "Вологодская обл.", lat: 59.1333, lon: 37.9000 },
-    { name: "Иваново", region: "Ивановская обл.", lat: 57.0000, lon: 40.9833 },
-    { name: "Кострома", region: "Костромская обл.", lat: 57.7667, lon: 40.9333 },
-    { name: "Великий Новгород", region: "Новгородская обл.", lat: 58.5167, lon: 31.2833 },
-    { name: "Псков", region: "Псковская обл.", lat: 57.8167, lon: 28.3333 },
-    { name: "Астрахань", region: "Астраханская обл.", lat: 46.3500, lon: 48.0333 },
-    { name: "Элиста", region: "Калмыкия", lat: 46.3167, lon: 44.2667 },
-    { name: "Майкоп", region: "Адыгея", lat: 44.6000, lon: 40.1000 },
-    { name: "Черкесск", region: "Карачаево-Черкесия", lat: 44.2167, lon: 42.0500 },
-    { name: "Нальчик", region: "Кабардино-Балкария", lat: 43.4833, lon: 43.6167 },
-    { name: "Владикавказ", region: "Северная Осетия", lat: 43.0333, lon: 44.6833 },
-    { name: "Грозный", region: "Чечня", lat: 43.3167, lon: 45.6833 },
-    { name: "Махачкала", region: "Дагестан", lat: 42.9833, lon: 47.4833 },
-    { name: "Йошкар-Ола", region: "Марий Эл", lat: 56.6333, lon: 47.8833 },
-    { name: "Чебоксары", region: "Чувашия", lat: 56.1167, lon: 47.2500 },
-    { name: "Саранск", region: "Мордовия", lat: 54.1833, lon: 45.1833 },
-    { name: "Сыктывкар", region: "Коми", lat: 61.6667, lon: 50.8167 },
-    { name: "Петрозаводск", region: "Карелия", lat: 61.7833, lon: 34.3500 },
-    { name: "Севастополь", region: "Севастополь", lat: 44.6167, lon: 33.5257 },
-    { name: "Симферополь", region: "Крым", lat: 44.9522, lon: 34.1025 },
-    { name: "Ялта", region: "Крым", lat: 44.4957, lon: 34.1664 },
-    { name: "Евпатория", region: "Крым", lat: 45.1933, lon: 33.3667 },
-    { name: "Феодосия", region: "Крым", lat: 45.0468, lon: 35.3785 },
-    { name: "Абакан", region: "Хакасия", lat: 53.7167, lon: 91.4167 },
-    { name: "Бийск", region: "Алтайский край", lat: 52.5333, lon: 85.2167 },
-    { name: "Рубцовск", region: "Алтайский край", lat: 51.5000, lon: 81.2000 },
-    { name: "Новокузнецк", region: "Кемеровская обл.", lat: 53.7500, lon: 87.1167 },
-    { name: "Прокопьевск", region: "Кемеровская обл.", lat: 53.8833, lon: 86.7167 },
-    { name: "Ленинск-Кузнецкий", region: "Кемеровская обл.", lat: 54.6500, lon: 86.1667 },
-    { name: "Юрга", region: "Кемеровская обл.", lat: 55.7167, lon: 84.8833 },
-    { name: "Северск", region: "Томская обл.", lat: 56.6000, lon: 84.8667 },
-    { name: "Сургут", region: "ХМАО", lat: 61.2500, lon: 73.4167 },
-    { name: "Нижневартовск", region: "ХМАО", lat: 60.9333, lon: 76.5667 },
-    { name: "Нефтеюганск", region: "ХМАО", lat: 61.1000, lon: 72.6000 },
-    { name: "Новый Уренгой", region: "ЯНАО", lat: 66.0833, lon: 76.6333 },
-    { name: "Ноябрьск", region: "ЯНАО", lat: 63.2000, lon: 75.4500 },
-    { name: "Ханты-Мансийск", region: "ХМАО", lat: 61.0000, lon: 69.0000 },
-    { name: "Салехард", region: "ЯНАО", lat: 66.5333, lon: 66.6000 },
-    { name: "Братск", region: "Иркутская обл.", lat: 56.1333, lon: 101.6167 },
-    { name: "Ангарск", region: "Иркутская обл.", lat: 52.5333, lon: 103.8833 },
-    { name: "Улан-Удэ", region: "Бурятия", lat: 51.8333, lon: 107.6167 },
-    { name: "Чита", region: "Забайкальский край", lat: 52.0333, lon: 113.5000 },
-    { name: "Норильск", region: "Красноярский край", lat: 69.3333, lon: 88.2167 },
-    { name: "Кызыл", region: "Тыва", lat: 51.7167, lon: 94.4500 },
-    { name: "Горно-Алтайск", region: "Алтай", lat: 51.9667, lon: 85.9667 },
-    { name: "Биробиджан", region: "Еврейская АО", lat: 48.7833, lon: 132.9333 },
-    { name: "Комсомольск-на-Амуре", region: "Хабаровский край", lat: 50.5500, lon: 137.0000 },
-    { name: "Благовещенск", region: "Амурская обл.", lat: 50.2667, lon: 127.5333 },
-    { name: "Якутск", region: "Якутия", lat: 62.0333, lon: 129.7333 },
-    { name: "Магадан", region: "Магаданская обл.", lat: 59.5667, lon: 150.8000 },
-    { name: "Петропавловск-Камчатский", region: "Камчатский край", lat: 53.0167, lon: 158.6500 },
-    { name: "Южно-Сахалинск", region: "Сахалинская обл.", lat: 46.9667, lon: 142.7333 },
-    { name: "Уссурийск", region: "Приморский край", lat: 43.8000, lon: 131.9500 },
-    { name: "Находка", region: "Приморский край", lat: 42.8167, lon: 132.8833 },
-    { name: "Артём", region: "Приморский край", lat: 43.3500, lon: 132.1833 },
-    { name: "Тольятти", region: "Самарская обл.", lat: 53.5167, lon: 49.4167 },
-    { name: "Сызрань", region: "Самарская обл.", lat: 53.1667, lon: 48.4667 },
-    { name: "Набережные Челны", region: "Татарстан", lat: 55.7000, lon: 52.3167 },
-    { name: "Нижнекамск", region: "Татарстан", lat: 55.6333, lon: 51.8167 },
-    { name: "Альметьевск", region: "Татарстан", lat: 54.9000, lon: 52.3000 },
-    { name: "Зеленодольск", region: "Татарстан", lat: 55.8500, lon: 48.5167 },
-    { name: "Стерлитамак", region: "Башкортостан", lat: 53.6333, lon: 55.9500 },
-    { name: "Салават", region: "Башкортостан", lat: 53.3667, lon: 55.9333 },
-    { name: "Нефтекамск", region: "Башкортостан", lat: 56.0833, lon: 54.2500 },
-    { name: "Октябрьский", region: "Башкортостан", lat: 54.4833, lon: 53.4667 },
-    { name: "Димитровград", region: "Ульяновская обл.", lat: 54.2333, lon: 49.5833 },
-    { name: "Балаково", region: "Саратовская обл.", lat: 52.0333, lon: 47.8000 },
-    { name: "Энгельс", region: "Саратовская обл.", lat: 51.4833, lon: 46.1167 },
-    { name: "Вольск", region: "Саратовская обл.", lat: 52.0500, lon: 47.3833 },
-    { name: "Каменск-Уральский", region: "Свердловская обл.", lat: 56.4000, lon: 61.9333 },
-    { name: "Первоуральск", region: "Свердловская обл.", lat: 56.9167, lon: 59.9500 },
-    { name: "Серов", region: "Свердловская обл.", lat: 59.6000, lon: 60.5667 },
-    { name: "Новоуральск", region: "Свердловская обл.", lat: 57.2500, lon: 60.0833 },
-    { name: "Миасс", region: "Челябинская обл.", lat: 55.0500, lon: 60.1000 },
-    { name: "Копейск", region: "Челябинская обл.", lat: 55.1000, lon: 61.6167 },
-    { name: "Златоуст", region: "Челябинская обл.", lat: 55.1667, lon: 59.6667 },
-    { name: "Озёрск", region: "Челябинская обл.", lat: 55.7500, lon: 60.7000 },
-    { name: "Троицк", region: "Челябинская обл.", lat: 54.0833, lon: 61.5667 },
-    { name: "Магнитогорск", region: "Челябинская обл.", lat: 53.3833, lon: 59.0333 },
-    { name: "Орск", region: "Оренбургская обл.", lat: 51.2000, lon: 58.5667 },
-    { name: "Бузулук", region: "Оренбургская обл.", lat: 52.7833, lon: 52.2667 },
+    { name: "Москва", region: "Московская обл.", lat: 55.7558, lon: 37.6173 }, { name: "Санкт-Петербург", region: "Ленинградская обл.", lat: 59.9343, lon: 30.3351 },
+    { name: "Воронеж", region: "Воронежская обл.", lat: 51.6605, lon: 39.2003 }, { name: "Краснодар", region: "Краснодарский край", lat: 45.0355, lon: 38.9753 },
+    { name: "Сочи", region: "Краснодарский край", lat: 43.5855, lon: 39.7231 }, { name: "Ростов-на-Дону", region: "Ростовская обл.", lat: 47.2221, lon: 39.7203 },
+    { name: "Волгоград", region: "Волгоградская обл.", lat: 48.7080, lon: 44.5133 }, { name: "Нижний Новгород", region: "Нижегородская обл.", lat: 56.2965, lon: 43.9361 },
+    { name: "Казань", region: "Татарстан", lat: 55.7887, lon: 49.1221 }, { name: "Самара", region: "Самарская обл.", lat: 53.1959, lon: 50.1002 },
+    { name: "Уфа", region: "Башкортостан", lat: 54.7349, lon: 55.9579 }, { name: "Екатеринбург", region: "Свердловская обл.", lat: 56.8389, lon: 60.6057 },
+    { name: "Челябинск", region: "Челябинская обл.", lat: 55.1644, lon: 61.4368 }, { name: "Новосибирск", region: "Новосибирская обл.", lat: 55.0084, lon: 82.9357 },
+    { name: "Омск", region: "Омская обл.", lat: 54.9885, lon: 73.3242 }, { name: "Красноярск", region: "Красноярский край", lat: 56.0097, lon: 92.8525 },
+    { name: "Иркутск", region: "Иркутская обл.", lat: 52.2864, lon: 104.2807 }, { name: "Владивосток", region: "Приморский край", lat: 43.1151, lon: 131.8856 },
+    { name: "Хабаровск", region: "Хабаровский край", lat: 48.4800, lon: 135.0800 }, { name: "Тюмень", region: "Тюменская обл.", lat: 57.1522, lon: 65.5272 },
+    { name: "Кемерово", region: "Кемеровская обл.", lat: 55.3549, lon: 86.0898 }, { name: "Томск", region: "Томская обл.", lat: 56.4951, lon: 84.9726 },
+    { name: "Барнаул", region: "Алтайский край", lat: 53.3561, lon: 83.7900 }, { name: "Калининград", region: "Калининградская обл.", lat: 54.7167, lon: 20.5000 },
+    { name: "Мурманск", region: "Мурманская обл.", lat: 68.9667, lon: 33.0833 }, { name: "Архангельск", region: "Архангельская обл.", lat: 64.5333, lon: 40.5333 },
+    { name: "Смоленск", region: "Смоленская обл.", lat: 54.7833, lon: 32.0500 }, { name: "Тверь", region: "Тверская обл.", lat: 56.8584, lon: 35.9006 },
+    { name: "Тула", region: "Тульская обл.", lat: 54.2000, lon: 37.6167 }, { name: "Рязань", region: "Рязанская обл.", lat: 54.6167, lon: 39.7167 },
+    { name: "Ярославль", region: "Ярославская обл.", lat: 57.6261, lon: 39.8845 }, { name: "Владимир", region: "Владимирская обл.", lat: 56.1284, lon: 40.4081 },
+    { name: "Калуга", region: "Калужская обл.", lat: 54.5333, lon: 36.2667 }, { name: "Орёл", region: "Орловская обл.", lat: 52.9667, lon: 36.0833 },
+    { name: "Курск", region: "Курская обл.", lat: 51.7167, lon: 36.1833 }, { name: "Белгород", region: "Белгородская обл.", lat: 50.6000, lon: 36.6000 },
+    { name: "Липецк", region: "Липецкая обл.", lat: 52.6167, lon: 39.6000 }, { name: "Тамбов", region: "Тамбовская обл.", lat: 52.7167, lon: 41.4333 },
+    { name: "Пенза", region: "Пензенская обл.", lat: 53.2000, lon: 45.0000 }, { name: "Саратов", region: "Саратовская обл.", lat: 51.5333, lon: 46.0333 },
+    { name: "Ульяновск", region: "Ульяновская обл.", lat: 54.3167, lon: 48.3667 }, { name: "Ижевск", region: "Удмуртия", lat: 56.8500, lon: 53.2167 },
+    { name: "Пермь", region: "Пермский край", lat: 58.0104, lon: 56.2294 }, { name: "Киров", region: "Кировская обл.", lat: 58.6000, lon: 49.6500 },
+    { name: "Курган", region: "Курганская обл.", lat: 55.4400, lon: 65.3300 }, { name: "Оренбург", region: "Оренбургская обл.", lat: 51.7682, lon: 55.0968 },
+    { name: "Ставрополь", region: "Ставропольский край", lat: 45.0500, lon: 41.9833 }, { name: "Пятигорск", region: "Ставропольский край", lat: 44.0333, lon: 43.0500 },
+    { name: "Вологда", region: "Вологодская обл.", lat: 59.2167, lon: 39.9000 }, { name: "Череповец", region: "Вологодская обл.", lat: 59.1333, lon: 37.9000 },
+    { name: "Иваново", region: "Ивановская обл.", lat: 57.0000, lon: 40.9833 }, { name: "Кострома", region: "Костромская обл.", lat: 57.7667, lon: 40.9333 },
+    { name: "Великий Новгород", region: "Новгородская обл.", lat: 58.5167, lon: 31.2833 }, { name: "Псков", region: "Псковская обл.", lat: 57.8167, lon: 28.3333 },
+    { name: "Астрахань", region: "Астраханская обл.", lat: 46.3500, lon: 48.0333 }, { name: "Элиста", region: "Калмыкия", lat: 46.3167, lon: 44.2667 },
+    { name: "Майкоп", region: "Адыгея", lat: 44.6000, lon: 40.1000 }, { name: "Черкесск", region: "Карачаево-Черкесия", lat: 44.2167, lon: 42.0500 },
+    { name: "Нальчик", region: "Кабардино-Балкария", lat: 43.4833, lon: 43.6167 }, { name: "Владикавказ", region: "Северная Осетия", lat: 43.0333, lon: 44.6833 },
+    { name: "Грозный", region: "Чечня", lat: 43.3167, lon: 45.6833 }, { name: "Махачкала", region: "Дагестан", lat: 42.9833, lon: 47.4833 },
+    { name: "Йошкар-Ола", region: "Марий Эл", lat: 56.6333, lon: 47.8833 }, { name: "Чебоксары", region: "Чувашия", lat: 56.1167, lon: 47.2500 },
+    { name: "Саранск", region: "Мордовия", lat: 54.1833, lon: 45.1833 }, { name: "Сыктывкар", region: "Коми", lat: 61.6667, lon: 50.8167 },
+    { name: "Петрозаводск", region: "Карелия", lat: 61.7833, lon: 34.3500 }, { name: "Севастополь", region: "Севастополь", lat: 44.6167, lon: 33.5257 },
+    { name: "Симферополь", region: "Крым", lat: 44.9522, lon: 34.1025 }, { name: "Ялта", region: "Крым", lat: 44.4957, lon: 34.1664 },
+    { name: "Евпатория", region: "Крым", lat: 45.1933, lon: 33.3667 }, { name: "Феодосия", region: "Крым", lat: 45.0468, lon: 35.3785 },
+    { name: "Абакан", region: "Хакасия", lat: 53.7167, lon: 91.4167 }, { name: "Бийск", region: "Алтайский край", lat: 52.5333, lon: 85.2167 },
+    { name: "Рубцовск", region: "Алтайский край", lat: 51.5000, lon: 81.2000 }, { name: "Новокузнецк", region: "Кемеровская обл.", lat: 53.7500, lon: 87.1167 },
+    { name: "Прокопьевск", region: "Кемеровская обл.", lat: 53.8833, lon: 86.7167 }, { name: "Ленинск-Кузнецкий", region: "Кемеровская обл.", lat: 54.6500, lon: 86.1667 },
+    { name: "Юрга", region: "Кемеровская обл.", lat: 55.7167, lon: 84.8833 }, { name: "Северск", region: "Томская обл.", lat: 56.6000, lon: 84.8667 },
+    { name: "Сургут", region: "ХМАО", lat: 61.2500, lon: 73.4167 }, { name: "Нижневартовск", region: "ХМАО", lat: 60.9333, lon: 76.5667 },
+    { name: "Нефтеюганск", region: "ХМАО", lat: 61.1000, lon: 72.6000 }, { name: "Новый Уренгой", region: "ЯНАО", lat: 66.0833, lon: 76.6333 },
+    { name: "Ноябрьск", region: "ЯНАО", lat: 63.2000, lon: 75.4500 }, { name: "Ханты-Мансийск", region: "ХМАО", lat: 61.0000, lon: 69.0000 },
+    { name: "Салехард", region: "ЯНАО", lat: 66.5333, lon: 66.6000 }, { name: "Братск", region: "Иркутская обл.", lat: 56.1333, lon: 101.6167 },
+    { name: "Ангарск", region: "Иркутская обл.", lat: 52.5333, lon: 103.8833 }, { name: "Улан-Удэ", region: "Бурятия", lat: 51.8333, lon: 107.6167 },
+    { name: "Чита", region: "Забайкальский край", lat: 52.0333, lon: 113.5000 }, { name: "Норильск", region: "Красноярский край", lat: 69.3333, lon: 88.2167 },
+    { name: "Кызыл", region: "Тыва", lat: 51.7167, lon: 94.4500 }, { name: "Горно-Алтайск", region: "Алтай", lat: 51.9667, lon: 85.9667 },
+    { name: "Биробиджан", region: "Еврейская АО", lat: 48.7833, lon: 132.9333 }, { name: "Комсомольск-на-Амуре", region: "Хабаровский край", lat: 50.5500, lon: 137.0000 },
+    { name: "Благовещенск", region: "Амурская обл.", lat: 50.2667, lon: 127.5333 }, { name: "Якутск", region: "Якутия", lat: 62.0333, lon: 129.7333 },
+    { name: "Магадан", region: "Магаданская обл.", lat: 59.5667, lon: 150.8000 }, { name: "Петропавловск-Камчатский", region: "Камчатский край", lat: 53.0167, lon: 158.6500 },
+    { name: "Южно-Сахалинск", region: "Сахалинская обл.", lat: 46.9667, lon: 142.7333 }, { name: "Уссурийск", region: "Приморский край", lat: 43.8000, lon: 131.9500 },
+    { name: "Находка", region: "Приморский край", lat: 42.8167, lon: 132.8833 }, { name: "Артём", region: "Приморский край", lat: 43.3500, lon: 132.1833 },
+    { name: "Тольятти", region: "Самарская обл.", lat: 53.5167, lon: 49.4167 }, { name: "Сызрань", region: "Самарская обл.", lat: 53.1667, lon: 48.4667 },
+    { name: "Набережные Челны", region: "Татарстан", lat: 55.7000, lon: 52.3167 }, { name: "Нижнекамск", region: "Татарстан", lat: 55.6333, lon: 51.8167 },
+    { name: "Альметьевск", region: "Татарстан", lat: 54.9000, lon: 52.3000 }, { name: "Зеленодольск", region: "Татарстан", lat: 55.8500, lon: 48.5167 },
+    { name: "Стерлитамак", region: "Башкортостан", lat: 53.6333, lon: 55.9500 }, { name: "Салават", region: "Башкортостан", lat: 53.3667, lon: 55.9333 },
+    { name: "Нефтекамск", region: "Башкортостан", lat: 56.0833, lon: 54.2500 }, { name: "Октябрьский", region: "Башкортостан", lat: 54.4833, lon: 53.4667 },
+    { name: "Димитровград", region: "Ульяновская обл.", lat: 54.2333, lon: 49.5833 }, { name: "Балаково", region: "Саратовская обл.", lat: 52.0333, lon: 47.8000 },
+    { name: "Энгельс", region: "Саратовская обл.", lat: 51.4833, lon: 46.1167 }, { name: "Вольск", region: "Саратовская обл.", lat: 52.0500, lon: 47.3833 },
+    { name: "Каменск-Уральский", region: "Свердловская обл.", lat: 56.4000, lon: 61.9333 }, { name: "Первоуральск", region: "Свердловская обл.", lat: 56.9167, lon: 59.9500 },
+    { name: "Серов", region: "Свердловская обл.", lat: 59.6000, lon: 60.5667 }, { name: "Новоуральск", region: "Свердловская обл.", lat: 57.2500, lon: 60.0833 },
+    { name: "Миасс", region: "Челябинская обл.", lat: 55.0500, lon: 60.1000 }, { name: "Копейск", region: "Челябинская обл.", lat: 55.1000, lon: 61.6167 },
+    { name: "Златоуст", region: "Челябинская обл.", lat: 55.1667, lon: 59.6667 }, { name: "Озёрск", region: "Челябинская обл.", lat: 55.7500, lon: 60.7000 },
+    { name: "Троицк", region: "Челябинская обл.", lat: 54.0833, lon: 61.5667 }, { name: "Магнитогорск", region: "Челябинская обл.", lat: 53.3833, lon: 59.0333 },
+    { name: "Орск", region: "Оренбургская обл.", lat: 51.2000, lon: 58.5667 }, { name: "Бузулук", region: "Оренбургская обл.", lat: 52.7833, lon: 52.2667 },
     { name: "Новотроицк", region: "Оренбургская обл.", lat: 51.2000, lon: 58.3000 }
 ];
 
@@ -574,7 +392,6 @@ const I18N = {
     ba: { title:"Анти ИИ Космос", subtitle:"Йондоҙлоҡтарҙы билдәләү", myCity:"Минең ҡалам", language:"Тел", photo:"Рәсем төшөрөү", photoDesc:"Күкте һаҡлау", video:"Видео", videoDesc:"Күкте яҙҙырыу", howto:"Ҡулланыу", howtoDesc:"Инструкция", support:"Проектҡа ярҙам", supportDesc:"Үҫешкә ярҙам", selectLang:"🗣️ Телде һайлағыҙ", ready:"Әҙер", mode:"Режим", now:"Хәҙер", eve:"Кис", night:"Төн", morn:"Иртә", spr:"Яҙ", sum:"Йәй", aut:"Көҙ", win:"Ҡыш", back:"Артҡа", supportFree:"Проект мәңгегә бушлай", copy:"Номерҙы күсереү", ourProjects:"🚀 Беҙҙең проекттар", instrCity:"🏙️ Минең ҡалам", instrCityDesc:"Исемлектән ҡалағыҙҙы һайлағыҙ — приложение координаталарҙы һәм өҫтөгөҙҙәге йондоҙлоҡто күрһәтә.", instrTime:"🕐 Ваҡыт һәм миҙгел", instrTimeDesc:"Кис/Төн/Иртә төймәләре күкте төрлө ваҡытта күрһәтә. Миҙгел төймәләре датаны үҙгәртә.", instrPhoto:"📷 Рәсем", instrPhotoDesc:"Йондоҙлоҡтар менән күк рәсемен һаҡлағыҙ. Офлайн эшләй.", close:"Ябыу", constellation:"Йондоҙлоҡ", zenith:"зенитта", coords:"Координаталар" },
     cv: { title:"Анти ИИ Космос", subtitle:"Çăлтăрлăхсене паллани", myCity:"Маннӑн хулам", language:"Чĕлхе", photo:"Ӳкерчĕк тума", photoDesc:"Тӳпене упрани", video:"Видео", videoDesc:"Тӳпене ҫырса илни", howto:"Усӑ курни", howtoDesc:"Инструкция", support:"Проекта пулӑшни", supportDesc:"Ӳсме пулӑшни", selectLang:"🗣️ Чĕлхене суйлӑр", ready:"Хатĕр", mode:"Режим", now:"Халь", eve:"Каҫ", night:"Ҫĕр", morn:"Ир", spr:"Ҫур", sum:"Ҫу", aut:"Кĕр", win:"Хĕл", back:"Каялла", supportFree:"Проект яланлӑха тӳлевсӗр", copy:"Номера куҫарни", ourProjects:"🚀 Пирӗн проектсем", instrCity:"🏙️ Маннӑн хулам", instrCityDesc:"Ят-йышран хула суйлӑр — приложение координатсене тата ҫинҫе ҫӑлтӑрлӑха кӑтартать.", instrTime:"🕐 Вӑхӑт тата сезон", instrTimeDesc:"Каҫ/Ҫĕр/Ир кнописем тӳпене тĕрлĕ вӑхӑтра кӑтартаҫҫĕ. Сезон кнописем даттине улӑштарать.", instrPhoto:"📷 Ӳкерчĕк", instrPhotoDesc:"Çăлтăрлăхсемпе тӳпе ӳкерчĕкне упрӑр. Офлайн ĕçлет.", close:"Хупни", constellation:"Çăлтăрлăх", zenith:"зенитре", coords:"Координатсем" }
 };
-
 function t(k) { const dict = I18N[state.lang] || I18N.ru; return dict[k] || I18N.ru[k] || k; }
 function applyLang() {
     if (isTranslating) return; isTranslating = true;
@@ -587,18 +404,9 @@ function applyLang() {
     } catch(e) { console.error(e); } finally { isTranslating = false; }
 }
 
-// === УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ТОЧНОГО ВРЕМЕНИ ГОРОДА ===
-function getCityTimezone(lon) {
-    const offset = Math.round(lon / 15); // Россия использует целые часовые пояса
-    return `Etc/GMT${offset >= 0 ? '-' : '+'}${Math.abs(offset)}`; // Etc/GMT использует инвертированные знаки
-}
-
-function formatTime(date, tz) {
-    try { return new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: tz }).format(date); } catch { return '--:--:--'; }
-}
-function formatDate(date, tz) {
-    try { return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: tz }).format(date); } catch { return '—'; }
-}
+function getCityTimezone(lon) { const offset = Math.round(lon / 15); return `Etc/GMT${offset >= 0 ? '-' : '+'}${Math.abs(offset)}`; }
+function formatTime(date, tz) { try { return new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: tz }).format(date); } catch { return '--:--:--'; } }
+function formatDate(date, tz) { try { return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: tz }).format(date); } catch { return '—'; } }
 
 const STARS = [
     {id:1, ra:2.53, dec:89.26, mag:2.0, name:{ru:"Полярная",tt:"Поляр йолдызы",ce:"Полярни седан чкъоьр",ba:"Поляр йондоҙо",cv:"Поляр ҫăлтăрĕ"}},
@@ -677,7 +485,6 @@ function updateCityInfo() {
     const constellation = getCurrentConstellation(city.lat, city.lon);
     if (cityConstellationEl) cityConstellationEl.innerHTML = `✨ ${t('constellation')} ${t('zenith')}:<br><strong style="font-size:22px;">${constellation}</strong> ✨`;
     
-    // ✅ ТОЧНОЕ ВРЕМЯ С УЧЁТОМ ЧАСОВОГО ПОЯСА ГОРОДА
     const tz = getCityTimezone(city.lon);
     const now = new Date();
     if (cityTimeEl) cityTimeEl.textContent = formatTime(now, tz);
@@ -735,7 +542,30 @@ const ANIMATION_CONSTELLATIONS = {
     'ЛЕБЕДЬ': { color: '#CC66FF', stars: [{ name: 'Денеб', x: 0.5, y: 0.2, mag: 1.3 }, { name: 'Садр', x: 0.5, y: 0.35, mag: 2.2 }, { name: 'Альбирео', x: 0.55, y: 0.45, mag: 3.1 }, { name: 'Гьенах', x: 0.45, y: 0.45, mag: 2.5 }, { name: 'Дельта Леб', x: 0.48, y: 0.4, mag: 2.9 }], lines: [[0,1],[1,2],[1,3],[1,4]] },
     'ЛИРА': { color: '#FF9933', stars: [{ name: 'Вега', x: 0.6, y: 0.35, mag: 0.0 }, { name: 'Шелиак', x: 0.58, y: 0.4, mag: 3.4 }, { name: 'Сулафат', x: 0.62, y: 0.38, mag: 3.2 }, { name: 'Дельта Лиры', x: 0.59, y: 0.42, mag: 4.2 }], lines: [[0,1],[0,2],[1,3],[2,3]] },
     'ПЕГАС': { color: '#FF6699', stars: [{ name: 'Маркаб', x: 0.3, y: 0.2, mag: 2.5 }, { name: 'Шеат', x: 0.25, y: 0.3, mag: 2.4 }, { name: 'Альгениб', x: 0.2, y: 0.15, mag: 2.8 }, { name: 'Эниф', x: 0.35, y: 0.25, mag: 2.4 }], lines: [[0,1],[1,2],[2,0],[0,3]] },
-    'АНДРОМЕДА': { color: '#9966FF', stars: [{ name: 'Альферац', x: 0.25, y: 0.1, mag: 2.1 }, { name: 'Мирах', x: 0.2, y: 0.15, mag: 2.1 }, { name: 'Альмак', x: 0.15, y: 0.2, mag: 2.1 }], lines: [[0,1],[1,2]] }
+    'АНДРОМЕДА': { color: '#9966FF', stars: [{ name: 'Альферац', x: 0.25, y: 0.1, mag: 2.1 }, { name: 'Мирах', x: 0.2, y: 0.15, mag: 2.1 }, { name: 'Альмак', x: 0.15, y: 0.2, mag: 2.1 }], lines: [[0,1],[1,2]] },
+    'ПЕРСЕЙ': { color: '#00FFAA', stars: [{ name: 'Мирфак (α)', x: 0.5, y: 0.45, mag: 1.8 }, { name: 'Гамма (γ)', x: 0.35, y: 0.2, mag: 2.8 }, { name: 'Эта (η)', x: 0.65, y: 0.15, mag: 3.8 }, { name: 'Алголь (β)', x: 0.6, y: 0.75, mag: 2.1 }, { name: 'Эпсилон (ε)', x: 0.35, y: 0.65, mag: 2.9 }, { name: 'Дзета (ζ)', x: 0.5, y: 0.8, mag: 2.8 }], lines: [[0,1],[0,2],[0,3],[3,4],[3,5]] },
+    'ВОЗНИЧИЙ': { color: '#FFCC00', stars: [{ name: 'Капелла (α)', x: 0.5, y: 0.15, mag: 0.1 }, { name: 'Йота (ι)', x: 0.3, y: 0.35, mag: 2.7 }, { name: 'Эпсилон (ε)', x: 0.7, y: 0.35, mag: 3.0 }, { name: 'Бета (β)', x: 0.6, y: 0.6, mag: 1.9 }, { name: 'Гамма (γ)', x: 0.4, y: 0.6, mag: 1.6 }, { name: 'Дельта (δ)', x: 0.35, y: 0.45, mag: 3.0 }], lines: [[0,1],[1,2],[2,3],[3,4],[4,1],[4,5],[1,5]] },
+    'БЛИЗНЕЦЫ': { color: '#66FF99', stars: [{ name: 'Кастор', x: 0.3, y: 0.3, mag: 1.6 }, { name: 'Поллукс', x: 0.35, y: 0.45, mag: 1.1 }, { name: 'Альхена', x: 0.4, y: 0.6, mag: 1.9 }, { name: 'Васат', x: 0.45, y: 0.45, mag: 3.5 }, { name: 'Мебсута', x: 0.25, y: 0.4, mag: 2.9 }], lines: [[0,1],[1,2],[1,3],[0,4],[3,4]] },
+    'ЛЕВ': { color: '#FFCC66', stars: [{ name: 'Регул', x: 0.75, y: 0.75, mag: 1.4 }, { name: 'Денебола', x: 0.9, y: 0.7, mag: 2.1 }, { name: 'Альгиеба', x: 0.8, y: 0.8, mag: 2.0 }, { name: 'Рас Аль Асад', x: 0.7, y: 0.85, mag: 3.4 }], lines: [[0,1],[0,2],[2,3]] },
+    'ДЕВА': { color: '#66CCFF', stars: [{ name: 'Спика', x: 0.85, y: 0.9, mag: 1.0 }, { name: 'Виндемиатрикс', x: 0.75, y: 0.85, mag: 2.8 }, { name: 'Поррима', x: 0.8, y: 0.75, mag: 2.7 }], lines: [[0,1],[1,2]] },
+    'ВЕСЫ': { color: '#CC99FF', stars: [{ name: 'Зубен эль Шамали', x: 0.5, y: 0.85, mag: 2.6 }, { name: 'Зубен эль Генуби', x: 0.55, y: 0.9, mag: 2.8 }, { name: 'Брахум', x: 0.45, y: 0.8, mag: 3.2 }], lines: [[0,1],[0,2]] },
+    'СКОРПИОН': { color: '#FF3399', stars: [{ name: 'Антарес', x: 0.45, y: 0.95, mag: 1.1 }, { name: 'Шаула', x: 0.35, y: 0.85, mag: 1.6 }, { name: 'Саргас', x: 0.4, y: 0.75, mag: 1.8 }, { name: 'Граффиас', x: 0.3, y: 0.8, mag: 2.5 }], lines: [[0,1],[0,2],[1,3]] },
+    'СТРЕЛЕЦ': { color: '#33FFCC', stars: [{ name: 'Каус Аустралис', x: 0.4, y: 1.0, mag: 1.8 }, { name: 'Нунки', x: 0.45, y: 0.95, mag: 2.1 }, { name: 'Альбалда', x: 0.35, y: 0.9, mag: 2.8 }], lines: [[0,1],[1,2]] },
+    'КОЗЕРОГ': { color: '#99CCFF', stars: [{ name: 'Дабих', x: 0.3, y: 0.95, mag: 3.0 }, { name: 'Альгеди', x: 0.25, y: 0.9, mag: 3.6 }, { name: 'Денеб Альгеди', x: 0.35, y: 0.85, mag: 2.8 }], lines: [[0,1],[1,2]] },
+    'ВОДОЛЕЙ': { color: '#66FFCC', stars: [{ name: 'Садалмелик', x: 0.35, y: 0.8, mag: 2.9 }, { name: 'Садальсууд', x: 0.3, y: 0.75, mag: 2.9 }, { name: 'Ската', x: 0.4, y: 0.7, mag: 3.2 }], lines: [[0,1],[1,2]] },
+    'РЫБЫ': { color: '#66CC99', stars: [{ name: 'Альриша', x: 0.25, y: 0.1, mag: 3.8 }, { name: 'Фомальгаут', x: 0.2, y: 0.25, mag: 1.2 }, { name: 'Кита', x: 0.3, y: 0.15, mag: 3.6 }], lines: [[0,1],[0,2]] },
+    'БОЛЬШОЙ ПЁС': { color: '#FFCC99', stars: [{ name: 'Сириус', x: 0.25, y: 0.85, mag: -1.5 }, { name: 'Мулифен', x: 0.3, y: 0.75, mag: 2.8 }, { name: 'Везен', x: 0.35, y: 0.8, mag: 1.8 }], lines: [[0,1],[0,2]] },
+    'МАЛЫЙ ПЁС': { color: '#99CC66', stars: [{ name: 'Процион', x: 0.6, y: 0.6, mag: 0.4 }, { name: 'Гомейса', x: 0.65, y: 0.55, mag: 2.9 }], lines: [[0,1]] },
+    'ТЕЛЕЦ': { color: '#FF6633', stars: [{ name: 'Альдебаран', x: 0.25, y: 0.5, mag: 0.9 }, { name: 'Эль-Нат', x: 0.22, y: 0.48, mag: 1.7 }, { name: 'Аин', x: 0.3, y: 0.55, mag: 3.5 }, { name: 'Хи-1', x: 0.35, y: 0.5, mag: 3.4 }], lines: [[0,1],[0,2],[2,3]] },
+    'КИТ': { color: '#66CC99', stars: [{ name: 'Менкар', x: 0.2, y: 0.1, mag: 2.5 }, { name: 'Дифда', x: 0.35, y: 0.25, mag: 2.0 }, { name: 'Кефаль', x: 0.28, y: 0.18, mag: 2.4 }], lines: [[0,1],[1,2]] },
+    'ЭРИДАН': { color: '#3399FF', stars: [{ name: 'Ахернар', x: 0.1, y: 0.95, mag: 0.5 }, { name: 'Курса', x: 0.25, y: 0.7, mag: 2.8 }, { name: 'Завижа', x: 0.3, y: 0.6, mag: 3.4 }], lines: [[0,1],[1,2]] },
+    'ЮЖНЫЙ КРЕСТ': { color: '#FF3366', stars: [{ name: 'Акрукс', x: 0.35, y: 0.85, mag: 0.8 }, { name: 'Бекрукс', x: 0.45, y: 0.8, mag: 1.3 }, { name: 'Гакрукс', x: 0.4, y: 0.75, mag: 1.6 }, { name: 'Дельта Юж. Креста', x: 0.38, y: 0.82, mag: 2.8 }], lines: [[0,1],[1,2],[0,2]] },
+    'ЦЕНТАВР': { color: '#FFCC33', stars: [{ name: 'Ригиль Кентаурус', x: 0.3, y: 0.8, mag: -0.3 }, { name: 'Хадар', x: 0.35, y: 0.75, mag: 0.6 }, { name: 'Менкент', x: 0.4, y: 0.7, mag: 2.1 }], lines: [[0,1],[1,2]] },
+    'ГЕРКУЛЕС': { color: '#FF9933', stars: [{ name: 'Рас Альгети', x: 0.6, y: 0.5, mag: 3.1 }, { name: 'Корнефорос', x: 0.55, y: 0.6, mag: 2.8 }, { name: 'Зета Геркулеса', x: 0.65, y: 0.45, mag: 2.9 }], lines: [[0,1],[1,2]] },
+    'ДРАКОН': { color: '#33CC66', stars: [{ name: 'Тубан', x: 0.6, y: 0.05, mag: 3.7 }, { name: 'Этамин', x: 0.7, y: 0.1, mag: 2.2 }, { name: 'Рас Аль Хаге', x: 0.65, y: 0.15, mag: 2.7 }], lines: [[0,1],[1,2]] },
+    'ЦЕФЕЙ': { color: '#66CCFF', stars: [{ name: 'Альдерамин', x: 0.45, y: 0.05, mag: 2.4 }, { name: 'Алаирак', x: 0.55, y: 0.08, mag: 3.2 }, { name: 'Эр Раи', x: 0.5, y: 0.12, mag: 2.4 }], lines: [[0,1],[1,2]] },
+    'МАЛАЯ МЕДВЕДИЦА': { color: '#FF6699', stars: [{ name: 'Полярная', x: 0.5, y: 0.1, mag: 2.0 }, { name: 'Кохаб', x: 0.35, y: 0.2, mag: 2.1 }, { name: 'Феркад', x: 0.3, y: 0.25, mag: 3.0 }], lines: [[0,1],[1,2]] },
+    'ЛИСИЧКА': { color: '#99FFFF', stars: [{ name: 'Альфа Лисички', x: 0.5, y: 0.5, mag: 4.4 }, { name: 'Бета', x: 0.45, y: 0.6, mag: 4.5 }, { name: 'Гамма', x: 0.55, y: 0.6, mag: 4.7 }, { name: 'Дельта', x: 0.5, y: 0.7, mag: 4.8 }], lines: [[0,1],[0,2],[1,3],[2,3]] }
 };
 
 function startConstellationAnimation() {
